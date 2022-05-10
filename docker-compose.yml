@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:14.2-bullseye
+    environment:
+      - POSTGRES_DB=api
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+
+  api:
+    build: .
+    command: sh -c "python manage.py migrate &&
+                    python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./api:/api
+    environment:
+      - POSTGRES_NAME=api
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    depends_on:
+      - db
