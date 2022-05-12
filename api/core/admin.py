@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 
 from .forms import UserChangeForm, UserCreationForm
-from .models import User
+from .models import User, GameModel
 
 
 class UserAdmin(BaseUserAdmin):
@@ -35,5 +35,6 @@ class UserAdmin(BaseUserAdmin):
 
 # Models registry
 admin.site.register(User, UserAdmin)
+admin.site.register(GameModel)
 
 admin.site.unregister(Group)
