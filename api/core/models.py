@@ -4,6 +4,7 @@ from django.contrib.auth.models import (
 )
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.hashers import make_password
 
 
 class UserManager(BaseUserManager):
@@ -50,14 +51,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateField(default=timezone.now)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', 'date_of_birth']
 
-    objects = UserManager
-
-    @property
-    def is_staff(self):
-        """Returns if the user is staff"""
-        return self.is_staff
+    objects = UserManager()
 
     class Meta:
         # Visible name of the model
