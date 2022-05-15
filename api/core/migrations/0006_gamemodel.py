@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                     decimal_places=2, max_digits=5, null=True
                 )),
                 ('image', models.ImageField(
-                    null=True, upload_to=core.models.game_image_path
+                    null=True, upload_to=core.models.get_image_path
                 )),
             ],
             options={

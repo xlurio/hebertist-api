@@ -1,16 +1,19 @@
+import pandas as pd
 import os
 import uuid
 
-from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin
 )
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
+from datetime import date
 from django.contrib.auth.hashers import make_password
+from django.db import models
+from django.conf import settings
+from django.utils import timezone
 
 
-def game_image_path(instance, filename):
+def get_image_path(instance, filename):
     """Returns the final path of the uploaded image"""
     extension = str(filename).split('.')[-1]
     filename = f'{uuid.uuid4()}.{extension}'
@@ -18,6 +21,7 @@ def game_image_path(instance, filename):
 
 
 class UserManager(BaseUserManager):
+    """Holds the methods to create new users"""
 
     def _create_user(self, email, password, **kwargs):
         """Creates and returns a new user"""
@@ -65,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     class Meta:
-        # Visible name of the model
+        """Visible name of the model"""
         verbose_name = _('user')
         verbose_name_plural = _('users')
 
@@ -79,29 +83,104 @@ class GameModel(models.Model):
     """Model of the game objects"""
     name = models.CharField(max_length=254, unique=True)
     score = models.IntegerField(null=True)
-    epic_price = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    gog_price = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    green_man_price = models.DecimalField(max_digits=5, decimal_places=2,
-                                          null=True)
-    microsoft_price = models.DecimalField(max_digits=5, decimal_places=2,
-                                          null=True)
-    nuuvem_price = models.DecimalField(max_digits=5, decimal_places=2,
-                                       null=True)
-    origin_price = models.DecimalField(max_digits=5, decimal_places=2,
-                                       null=True)
-    rockstar_price = models.DecimalField(max_digits=5, decimal_places=2,
-                                         null=True)
-    steam_price = models.DecimalField(max_digits=5, decimal_places=2,
-                                      null=True)
-    ubisoft_price = models.DecimalField(max_digits=5, decimal_places=2,
-                                        null=True)
-    image = models.ImageField(null=True, upload_to=game_image_path)
+    image = models.ImageField(null=True, upload_to=get_image_path)
 
     class Meta:
-        # Display name of the model on admin interface
+        """Display the name of the game model on admin interface"""
         verbose_name = _('game')
         verbose_name_plural = _('games')
 
     def __str__(self):
         """Defines the string form of the game object as its name"""
         return self.name
+
+
+class StoreModel(models.Model):
+    """Model of the game stores objects"""
+    name = models.CharField(max_length=254, unique=True)
+    image = models.ImageField(null=True, upload_to=get_image_path)
+
+    class Meta:
+        """Display the name of the store model on admin interface"""
+        verbose_name = _('game')
+        verbose_name_plural = _('games')
+
+    def __str__(self):
+        """Defines the string form of the store objects as its name"""
+        return self.name
+
+
+class PriceModel(models.Model):
+    """Model of the game prices objects"""
+    game = models.ForeignKey(to='GameModel', on_delete=models.CASCADE)
+    store = models.ForeignKey(to='StoreModel', on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+
+    class Meta:
+        """Display the name of the price model on admin interface"""
+        verbose_name = _('price')
+        verbose_name_plural = _('prices')
+
+    def __str__(self):
+        """Defines the string form of the price objects as the name of the
+        game and of the store from which the price was provided"""
+        return f'{str(self.game)} price on {str(self.store)}'
+
+
+class PriceHistoricModel(models.Model):
+    """Models of the price historic objects"""
+    game = models.ForeignKey(
+        to='GameModel',
+        on_delete=models.CASCADE
+    )
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    time_saved = models.DateField(unique_for_date=True,
+                                  default=date.today)
+
+    class Meta:
+        """Display the name of the price historic model on admin interface"""
+        verbose_name = 'price historic'
+        verbose_name_plural = 'prices historic'
+
+    def __str__(self):
+        """Defines the string form of the price historic object as its game
+        name and the time of the historic"""
+        return f'{self.game} price at {str(self.time_saved)}'
+
+
+def _save_price_historic_to_model(data_to_insert, time_saved=None):
+    """Saves inserts data directly in a SQL data table"""
+    if time_saved:
+        for index, row in data_to_insert.iterrows():
+            PriceHistoricModel.objects.create(
+                game=GameModel.objects.get(id=int(row['game_id'])),
+                price=float(row['price']),
+                time_saved=time_saved,
+            )
+    else:
+        for index, row in data_to_insert.iterrows():
+            PriceHistoricModel.objects.create(
+                game=GameModel.objects.get(id=int(row['game_id'])),
+                price=float(row['price']),
+            )
+
+
+def save_price_historic(time_saved=None):
+    """Saves the current lowest price of each game"""
+    prices_data = pd.DataFrame(PriceModel.objects.all().values())
+    prices_data = prices_data.groupby(by='game_id').min().reset_index()
+    prices_data = prices_data[['game_id', 'price']]
+    _save_price_historic_to_model(prices_data, time_saved)
+    return PriceHistoricModel.objects.all()
+
+
+class WishlistModel(models.Model):
+    """Model of the wishes on the users wishlist"""
+    user = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    game = models.ForeignKey(
+        to=GameModel,
+        on_delete=models.CASCADE
+    )
