@@ -1,8 +1,10 @@
 from django.urls import path
-from user.views import CreateTokenViewSet
+# noinspection PyUnresolvedReferences
+from user.views import CreateTokenView, ManageUserView
 
 app_name = 'users'
 
 urlpatterns = [
-    path('token/', CreateTokenViewSet.as_view(), name='token')
+    path('token/', CreateTokenView.as_view(), name='token'),
+    path('me/', ManageUserView.as_view(), name='me'),
 ]

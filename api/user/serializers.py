@@ -1,6 +1,28 @@
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Serializes the user objects"""
+    password = serializers.CharField(
+        write_only=True,
+        min_length=5,
+        style={'input_type': 'password'}
+    )
+
+    class Meta:
+        model = get_user_model()
+        fields = ['email', 'password', 'date_of_birth', ]
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+        return user
 
 
 class AuthTokenSerializer(serializers.Serializer):

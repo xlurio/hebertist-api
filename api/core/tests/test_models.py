@@ -14,8 +14,8 @@ from django.test import TestCase
 def create_sample_user(**kwargs):
     """Creates a sample user objects"""
     payload = {
-        'email': 'takakara@nomuro.com',
-        'password': 'takakarapass123',
+        'email': 'sample@email.com',
+        'password': 'samplepass123',
         'date_of_birth': datetime(1996, 8, 20),
     }
     payload.update(kwargs)
@@ -97,8 +97,8 @@ def _get_historic_price_data_for_test(time_of_the_historic, game1, game2):
 
 class ModelsTests(TestCase):
     """Models tests"""
-    test_email = 'takakara@nomuro.com'
-    test_password = 'takakarapass123'
+    test_email = 'sample@email.com'
+    test_password = 'samplepass123'
     test_date_of_birth = datetime(1996, 8, 20)
 
     def test_create_user(self):

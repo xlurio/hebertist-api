@@ -14,6 +14,8 @@ services:
                     python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./api:/api
+    ports:
+      - "8000:8000"
     environment:
       - POSTGRES_NAME=api
       - POSTGRES_USER=user
