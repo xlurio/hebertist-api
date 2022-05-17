@@ -37,7 +37,8 @@ def create_sample_game(**kwargs):
 def create_sample_store(**kwargs):
     """Creates a sample store object"""
     payload = {
-        'name': 'Sample store'
+        'name': 'Sample store',
+        'link': 'https://store.sample.com/'
     }
     payload.update(kwargs)
     return StoreModel.objects.create(**payload)
@@ -142,8 +143,10 @@ class ModelsTests(TestCase):
     def test_create_store(self):
         """Test creating game store"""
         store_name = 'Steam'
+        store_link = 'https://store.steampowered.com/'
         store = StoreModel.objects.create(
-            name=store_name
+            name=store_name,
+            link=store_link,
         )
         self.assertEqual(store.name, store_name)
 
@@ -151,18 +154,20 @@ class ModelsTests(TestCase):
         """Test creating game store"""
         game_name = 'Life is Strange'
         store_name = 'Steam'
+        store_link = 'https://store.steampowered.com/'
         price_value = 36.99
         game = GameModel.objects.create(
             name=game_name,
             score=83
         )
         store = StoreModel.objects.create(
-            name=store_name
+            name=store_name,
+            link=store_link,
         )
         game_price = PriceModel.objects.create(
             game=game,
             store=store,
-            price=price_value
+            price=price_value,
         )
         self.assertEqual(game_price.game.name, game_name)
         self.assertEqual(game_price.store.name, store_name)
@@ -182,9 +187,18 @@ class ModelsTests(TestCase):
         # Create the objects for the test
         game1 = create_sample_game(name="Assassin's Creed: Valhala")
         game2 = create_sample_game(name="Battlefield 4")
-        store1 = create_sample_store(name='Ubisoft')
-        store2 = create_sample_store(name='Steam')
-        store3 = create_sample_store(name='Origin')
+        store1 = create_sample_store(
+            name='Ubisoft',
+            link='https://store.ubi.com/',
+        )
+        store2 = create_sample_store(
+            name='Steam',
+            link='https://store.steampowered.com/'
+        )
+        store3 = create_sample_store(
+            name='Origin',
+            link='https://www.origin.com/',
+        )
         price1, price2 = _create_objects_for_price_historic_test(
             game1=game1,
             game2=game2,

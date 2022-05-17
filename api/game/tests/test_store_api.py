@@ -1,31 +1,31 @@
 from rest_framework.test import APIClient
 from datetime import date
 # noinspection PyUnresolvedReferences
-from core.models import GameModel
+from core.models import StoreModel
 # noinspection PyUnresolvedReferences
-from game.serializers import GameSerializer
+from game.serializers import StoreSerializer
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from django.test import TestCase
 
-GAME_URL = reverse('game:game-list')
+STORE_URL = reverse('game:store-list')
 
 
-class PublicGameAPITests(TestCase):
-    """Test the public features of the game API tests"""
+class PublicStoreAPITests(TestCase):
+    """Test the public features of the store API tests"""
 
     def setUp(self):
         self.client = APIClient()
 
     def test_login_required(self):
         """Test unauthorized access to the API"""
-        res = self.client.get(GAME_URL)
+        res = self.client.get(STORE_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateGameAPITests(TestCase):
-    """Test the private features of the game API"""
+    """Test the private features of the store API"""
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(
@@ -38,19 +38,19 @@ class PrivateGameAPITests(TestCase):
 
     def test_list_games(self):
         """Test retrieve all game objects"""
-        GameModel.objects.create(
-            name='Call of Duty',
-            score=91,
+        StoreModel.objects.create(
+            name='Steam',
+            link='https://store.steampowered.com/',
         )
-        GameModel.objects.create(
-            name='The Witcher 3: Wild Hunt',
-            score=93
+        StoreModel.objects.create(
+            name='Origin',
+            link='https://www.origin.com/',
         )
 
-        games = GameModel.objects.all().order_by('name')
-        serializer = GameSerializer(games, many=True)
+        stores = StoreModel.objects.all().order_by('name')
+        serializer = StoreSerializer(stores, many=True)
 
-        res = self.client.get(GAME_URL)
+        res = self.client.get(STORE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)

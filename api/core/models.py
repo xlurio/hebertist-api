@@ -98,6 +98,7 @@ class GameModel(models.Model):
 class StoreModel(models.Model):
     """Model of the game stores objects"""
     name = models.CharField(max_length=254, unique=True)
+    link = models.URLField(unique=True)
     image = models.ImageField(null=True, upload_to=get_image_path)
 
     class Meta:
