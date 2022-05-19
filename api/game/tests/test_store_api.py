@@ -24,7 +24,7 @@ class PublicStoreAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class PrivateGameAPITests(TestCase):
+class PrivateStoreAPITests(TestCase):
     """Test the private features of the store API"""
 
     def setUp(self):
@@ -36,7 +36,7 @@ class PrivateGameAPITests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(self.user)
 
-    def test_list_games(self):
+    def test_list_stores(self):
         """Test retrieve all game objects"""
         StoreModel.objects.create(
             name='Steam',

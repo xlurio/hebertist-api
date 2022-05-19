@@ -3,6 +3,7 @@ version: "3.9"
 services:
   db:
     image: postgres:14.2-bullseye
+    restart: always
     environment:
       - POSTGRES_DB=api
       - POSTGRES_USER=user
