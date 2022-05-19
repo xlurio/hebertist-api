@@ -64,7 +64,7 @@ class PrivatePriceAPITests(TestCase):
         self.client.force_authenticate(self.user)
 
     def test_list_prices(self):
-        """Test retrieve all price objects"""
+        """Test retrieving all price objects"""
         # Test parameters
         game_name1 = 'Hextech Mayhem: A League of Legends Story'
         game_name2 = 'V Rising'

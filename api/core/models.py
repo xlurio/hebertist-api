@@ -23,25 +23,28 @@ def get_image_path(instance, filename):
 class UserManager(BaseUserManager):
     """Holds the methods to create new users"""
 
-    def _create_user(self, email, password, **kwargs):
+    def _create_user(self, email, password, date_of_birth, **kwargs):
         """Creates and returns a new user"""
         if not email:
             raise ValueError('An username must be set')
+        if not date_of_birth:
+            raise ValueError('An date of birth must be set')
         user = self.model(
             email=self.normalize_email(email),
+            date_of_birth=date_of_birth,
             **kwargs
         )
         user.password = make_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, password, **kwargs):
+    def create_user(self, **kwargs):
         """Creates and returns a common user"""
         kwargs.setdefault('is_staff', False)
         kwargs.setdefault('is_superuser', False)
-        return self._create_user(email, password, **kwargs)
+        return self._create_user(**kwargs)
 
-    def create_superuser(self, email, password, **kwargs):
+    def create_superuser(self, **kwargs):
         """Creates and returns a common user"""
         kwargs.setdefault('is_staff', True)
         kwargs.setdefault('is_superuser', True)
@@ -51,7 +54,7 @@ class UserManager(BaseUserManager):
         if not kwargs.get("is_superuser"):
             raise ValueError('Superuser must have is_superuser=True')
 
-        return self._create_user(email, password, **kwargs)
+        return self._create_user(**kwargs)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -135,7 +138,7 @@ class PriceHistoricModel(models.Model):
         on_delete=models.CASCADE
     )
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    time_saved = models.DateField(unique_for_date=True,
+    time_saved = models.DateField(unique_for_date='game',
                                   default=date.today)
 
     class Meta:
