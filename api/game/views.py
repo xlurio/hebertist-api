@@ -1,4 +1,3 @@
-from rest_framework.permissions import IsAuthenticated
 # noinspection PyUnresolvedReferences
 from core.models import GameModel, PriceModel, StoreModel
 # noinspection PyUnresolvedReferences
@@ -6,13 +5,10 @@ from game.serializers import (
     GameSerializer, PriceSerializer, PriceDetailSerializer, StoreSerializer
 )
 from rest_framework import mixins, viewsets
-from rest_framework.authentication import TokenAuthentication
 
 
 class BasicGameAttrViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     """Basic view set class for the game API"""
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Retrieve the objects of the serializer"""
@@ -33,8 +29,6 @@ class StoreViewSet(BasicGameAttrViewSet):
 
 class PriceViewSet(viewsets.ModelViewSet):
     """View set to manage the price objects"""
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     queryset = PriceModel.objects.all()
     serializer_class = PriceSerializer
 

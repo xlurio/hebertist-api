@@ -1,10 +1,8 @@
 from rest_framework.test import APIClient
-from datetime import date
 # noinspection PyUnresolvedReferences
 from core.models import GameModel
 # noinspection PyUnresolvedReferences
 from game.serializers import GameSerializer
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from django.test import TestCase
@@ -17,24 +15,6 @@ class PublicGameAPITests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-
-    def test_login_required(self):
-        """Test unauthorized access to the API"""
-        res = self.client.get(GAME_URL)
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-
-
-class PrivateGameAPITests(TestCase):
-    """Test the private features of the game API"""
-
-    def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            email='sample@email.com',
-            password='samplepassword123',
-            date_of_birth=date(year=2002, month=9, day=30),
-        )
-        self.client = APIClient()
-        self.client.force_authenticate(self.user)
 
     def test_list_games(self):
         """Test retrieve all game objects"""

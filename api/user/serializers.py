@@ -1,4 +1,8 @@
 from django.contrib.auth import authenticate
+# noinspection PyUnresolvedReferences
+from core.models import GameModel, WishlistModel
+# noinspection PyUnresolvedReferences
+from game.serializers import GameSerializer
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -16,7 +20,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ['email', 'password', 'date_of_birth', ]
 
+    def create(self, validated_data):
+        """Create a new user objects"""
+        return get_user_model().objects.create_user(**validated_data)
+
     def update(self, instance, validated_data):
+        """Update the authenticated user information"""
         password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
         if password:
@@ -52,3 +61,20 @@ class AuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class WishlistSerializer(serializers.ModelSerializer):
+    """Serializes the wishlist objects"""
+    game = serializers.PrimaryKeyRelatedField(
+        queryset=GameModel
+    )
+
+    class Meta:
+        model = WishlistModel
+        fields = ['id', 'game']
+        read_only_fields = ['id']
+
+
+class WishlistDetailSerializer(WishlistSerializer):
+    """Serializes the wishlist object details"""
+    game = GameSerializer(read_only=True)

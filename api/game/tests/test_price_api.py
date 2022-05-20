@@ -1,8 +1,6 @@
 from rest_framework.test import APIClient
-from datetime import date
 # noinspection PyUnresolvedReferences
 from core.models import GameModel, PriceModel, StoreModel
-from django.contrib.auth import get_user_model
 # noinspection PyUnresolvedReferences
 from game.serializers import PriceSerializer, PriceDetailSerializer
 from django.urls import reverse
@@ -44,24 +42,6 @@ class PublicPriceAPITests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-
-    def test_login_required(self):
-        """Test unauthorized access to the API"""
-        res = self.client.get(get_price_url())
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-
-
-class PrivatePriceAPITests(TestCase):
-    """Test the private features of the price API"""
-
-    def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            email='sample@user.com',
-            password='samplepassword123',
-            date_of_birth=date(year=1980, month=5, day=9),
-        )
-        self.client = APIClient()
-        self.client.force_authenticate(self.user)
 
     def test_list_prices(self):
         """Test retrieving all price objects"""

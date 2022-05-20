@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from django.test import TestCase
 
+CREATE_USER_URL = reverse('users:create')
 TOKEN_URL = reverse('users:token')
 ME_URL = reverse('users:me')
 
@@ -15,11 +16,50 @@ class PublicUserAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
+    def test_create_user(self):
+        """Test creating user"""
+        payload = {
+            'email': 'sample@user.com',
+            'password': 'samplepassword123',
+            'date_of_birth': date(year=1986, month=7, day=24)
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        user = get_user_model().objects.get(**res.data)
+        self.assertTrue(user.check_password(payload['password']))
+        self.assertNotIn(payload['password'], res.data)
+
+    def test_creating_existing_user(self):
+        """Test creating a user that already exists"""
+        payload = {
+            'email': 'sample@user.com',
+            'password': 'sample@password',
+            'date_of_birth': date(year=1990, month=1, day=1),
+        }
+        get_user_model().objects.create(**payload)
+        res = self.client.post(CREATE_USER_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_with_short_password(self):
+        """Test creating user by inputting a password shorter than 5
+        characters"""
+        payload = {
+            'email': 'sample@user.com',
+            'password': 'pass',
+            'date_of_birth': date(year=1990, month=1, day=1),
+        }
+        res = self.client.post(CREATE_USER_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        does_user_exists = get_user_model().objects.filter(
+            email=payload['email']
+        ).exists()
+        self.assertFalse(does_user_exists)
+
     def test_create_token(self):
         """Test creating token"""
         payload = {
-            'email': 'tomo@noku.com',
-            'password': 'tomopassword123',
+            'email': 'sample@user.com',
+            'password': 'samplepassword123',
             'date_of_birth': date(year=1998, month=8, day=26)
         }
         get_user_model().objects.create_user(**payload)
