@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import sys
 import uuid
 
 from django.utils.translation import gettext_lazy as _
@@ -11,6 +12,9 @@ from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_image_path(instance, filename):
@@ -98,6 +102,15 @@ class GameModel(models.Model):
         return self.name
 
 
+def update_game_model():
+    """Updates the game model data"""
+    sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
+    # noinspection PyUnresolvedReferences
+    from crawler.game_crawler import GameCrawler
+    crawler = GameCrawler()
+    crawler.run_crawler()
+
+
 class StoreModel(models.Model):
     """Model of the game stores objects"""
     name = models.CharField(max_length=254, unique=True)
@@ -106,8 +119,8 @@ class StoreModel(models.Model):
 
     class Meta:
         """Display the name of the store model on admin interface"""
-        verbose_name = _('game')
-        verbose_name_plural = _('games')
+        verbose_name = _('store')
+        verbose_name_plural = _('stores')
 
     def __str__(self):
         """Defines the string form of the store objects as its name"""
@@ -129,6 +142,15 @@ class PriceModel(models.Model):
         """Defines the string form of the price objects as the name of the
         game and of the store from which the price was provided"""
         return f'{str(self.game)} price on {str(self.store)}'
+
+
+def update_price_model():
+    """Updates the game model data"""
+    sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
+    # noinspection PyUnresolvedReferences
+    from crawler.price_crawler import PriceCrawler
+    crawler = PriceCrawler()
+    crawler.run_crawler()
 
 
 class PriceHistoricModel(models.Model):

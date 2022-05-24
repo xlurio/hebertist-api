@@ -4,19 +4,36 @@ services:
   db:
     image: postgres:14.2-bullseye
     restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=api
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
     command: sh -c "python manage.py migrate &&
-                    python manage.py runserver 0.0.0.0:8000"
+                    python manage.py runserver 0.0.0.0:8000 --noreload"
     volumes:
       - ./api:/api
     ports:
       - "8000:8000"
+    environment:
+      - POSTGRES_NAME=api
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    depends_on:
+      - db
+
+  crawler:
+    build:
+      context: .
+      dockerfile: ./crawler/Dockerfile
+    volumes:
+      - ./crawler:/crawler
     environment:
       - POSTGRES_NAME=api
       - POSTGRES_USER=user
