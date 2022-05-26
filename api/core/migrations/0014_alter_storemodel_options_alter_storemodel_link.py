@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('core', '0013_alter_pricehistoricmodel_time_saved'),
     ]
@@ -17,6 +16,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='storemodel',
             name='link',
-            field=models.URLField(default='https://<django.db.models.fields.CharField>.com/', unique=True),
+            field=models.URLField(
+                default='https://<django.db.models.fields.CharField>.com/',
+                unique=True),
         ),
     ]

@@ -1,4 +1,3 @@
-from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 # noinspection PyUnresolvedReferences
 from core import models
