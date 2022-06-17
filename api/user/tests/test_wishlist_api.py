@@ -66,7 +66,7 @@ class PrivateWishlistAPI(TestCase):
         res = self.client.get(get_wishlist_url())
         serializer = WishlistSerializer(wishlist, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_retrieve_details(self):
         """Test retrieving the details of the wishlist object"""

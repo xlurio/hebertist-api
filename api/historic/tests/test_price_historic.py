@@ -63,11 +63,11 @@ class PrivatePriceHistoricAPI(TestCase):
         create_price_historic(
             time_saved=date(year=2022, month=3, day=6)
         )
-        prices = PriceHistoricModel.objects.all().order_by('price')
+        prices = PriceHistoricModel.objects.all().order_by('price')[:100]
         res = self.client.get(get_price_historic_url())
         serializer = PriceHistoricSerializer(prices, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_retrieve_details(self):
         """Test retrieving the details of the price historic object"""

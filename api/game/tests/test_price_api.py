@@ -1,3 +1,6 @@
+import numpy.random as np
+import pandas as pd
+
 from rest_framework.test import APIClient
 # noinspection PyUnresolvedReferences
 from core.models import GameModel, PriceModel, StoreModel
@@ -7,6 +10,8 @@ from django.urls import reverse
 from rest_framework import status
 from django.test import TestCase
 
+BEST_PRICES_URL = reverse('game:price-best-prices')
+
 
 def get_price_url(price_id=None):
     """Retrieves the price url"""
@@ -14,6 +19,17 @@ def get_price_url(price_id=None):
         return reverse('game:price-detail', args=[price_id])
     else:
         return reverse('game:price-list')
+
+
+def get_lowest_prices_id(price_query):
+    price_data = pd.DataFrame(price_query.values())
+    try:
+        filtered_price_data = price_data[['id', 'game_id', 'price']].groupby(
+            'game_id'
+        ).min()
+        return list(filtered_price_data['id'])
+    except KeyError:
+        raise KeyError(f'The available columns are: {price_data.columns}')
 
 
 def create_price_object(game_name='Sample Game',
@@ -35,6 +51,32 @@ def create_price_object(game_name='Sample Game',
         price=price
     )
     return game, store, price
+
+
+def create_multiple_price_objects():
+    games = [
+        'Tomb Raider',
+        'Risk of Rain 2',
+        'Grand Theft Auto San Andreas'
+    ]
+    stores = [
+        ('Steam', 'https://store.steampowered.com/'),
+        ('GoG.com', 'https://www.gog.com/'),
+        ('Microsoft Store',
+         'https://www.microsoft.com/pt-br/store/games/')
+    ]
+    prices = np.random(9, ) * 100
+    prices = ['{0:.2f}'.format(price) for price in prices]
+    price_counter = 0
+    for game in games:
+        for store in stores:
+            create_price_object(
+                game_name=game,
+                store_name=store[0],
+                store_link=store[1],
+                price=float(prices[price_counter])
+            )
+        price_counter += 1
 
 
 class PublicPriceAPITests(TestCase):
@@ -64,7 +106,7 @@ class PublicPriceAPITests(TestCase):
 
         # Assertions
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(serializer.data, res.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_retrieve_details(self):
         """Test retrieving the details of the price objects"""
@@ -77,3 +119,36 @@ class PublicPriceAPITests(TestCase):
         res = self.client.get(get_price_url(price.id))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+    def test_retrieve_best_prices(self):
+        """Test retrieving best game prices"""
+        create_multiple_price_objects()
+        price_query = PriceModel.objects.all().order_by('price')
+        expected_prices_id = get_lowest_prices_id(price_query)
+        best_prices_query = PriceModel.objects.filter(
+            id__in=expected_prices_id
+        ).order_by('price')
+        serializer = PriceSerializer(best_prices_query, many=True)
+        res = self.client.get(BEST_PRICES_URL)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_filter_best_prices(self):
+        """Test filtering by game name"""
+        create_multiple_price_objects()
+        price_query = PriceModel.objects.all().order_by('price')
+        expected_prices_id = get_lowest_prices_id(price_query)
+        best_prices_query = PriceModel.objects.filter(
+            id__in=expected_prices_id
+        ).order_by('price')
+
+        name_to_search = 'rain'
+        best_prices_query = best_prices_query.filter(
+            game__name__icontains=name_to_search
+        )
+
+        serializer = PriceSerializer(best_prices_query, many=True)
+        res = self.client.get(BEST_PRICES_URL, {'game_name': name_to_search})
+        try:
+            self.assertEqual(res.data, serializer.data)
+        except TypeError:
+            raise TypeError(res.data)
