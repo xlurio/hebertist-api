@@ -75,6 +75,6 @@ class PriceViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         """Return the appropriated serializer class based on the action
         requested"""
-        if self.action == 'retrieve':
+        if self.action == 'retrieve' or self.action == 'best_prices':
             return PriceDetailSerializer
         return self.serializer_class
