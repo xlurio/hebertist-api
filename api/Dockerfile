@@ -1,5 +1,5 @@
 FROM python:3.9.12-bullseye
-MAINTAINER Lucas Calegario
+LABEL Lucas Calegario
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -13,4 +13,5 @@ COPY ./crawler /crawler
 COPY ./api /api
 
 RUN useradd -ms /bin/bash user
+RUN chown -R user .
 USER user

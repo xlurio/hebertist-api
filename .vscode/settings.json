@@ -1,0 +1,6 @@
+{
+  "python.analysis.extraPaths": ["./crawler", "./crawler", "./api"],
+  "[python]": {
+    "editor.tabSize": 4
+  }
+}
