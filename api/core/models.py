@@ -139,6 +139,9 @@ class PriceModel(models.Model):
     game = models.ForeignKey(to='GameModel', on_delete=models.CASCADE)
     store = models.ForeignKey(to='StoreModel', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    link = models.URLField(
+        default='https://example.com/', null=False, blank=False
+    )
 
     class Meta:
         """Display the name of the price model on admin interface"""

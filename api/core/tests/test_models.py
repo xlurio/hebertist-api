@@ -44,12 +44,13 @@ def create_sample_store(**kwargs):
     return StoreModel.objects.create(**payload)
 
 
-def create_sample_price(game, store, price=36.99):
+def create_sample_price(game, store, price=36.99, link='https://example.com/'):
     """Creates a sample price object"""
     payload = {
         'game': game,
         'store': store,
         'price': price,
+        'link': link,
     }
     return PriceModel.objects.create(**payload)
 
@@ -60,22 +61,26 @@ def _create_objects_for_price_historic_test(game1, game2, store1,
     price1 = create_sample_price(
         game=game1,
         store=store1,
-        price=5.99
+        price=5.99,
+        link=f'https://{store1}.com/{game1}/',
     )
     price2 = create_sample_price(
         game=game2,
         store=store2,
-        price=6.99
+        price=6.99,
+        link=f'https://{store2}.com/{game2}/',
     )
     create_sample_price(
         game=game1,
         store=store2,
-        price=10.99
+        price=10.99,
+        link=f'https://{store2}.com/{game1}/',
     )
     create_sample_price(
         game=game2,
         store=store3,
-        price=10.99
+        price=10.99,
+        link=f'https://{store3}.com/{game2}/',
     )
     return price1, price2
 
