@@ -16,9 +16,10 @@ services:
       context: .
       dockerfile: ./api/Dockerfile
     command: sh -c "python manage.py migrate &&
-                    python manage.py runserver 0.0.0.0:8000 --noreload"
+      python manage.py runserver 0.0.0.0:8000 --noreload"
     volumes:
       - ./api:/api
+      - ./crawler:/crawler
     ports:
       - "8000:8000"
     environment:
@@ -33,6 +34,7 @@ services:
       context: .
       dockerfile: ./crawler/Dockerfile
     volumes:
+      - ./api:/api
       - ./crawler:/crawler
     environment:
       - POSTGRES_NAME=api
