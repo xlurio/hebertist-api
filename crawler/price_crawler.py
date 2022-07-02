@@ -1,3 +1,4 @@
+from games_price_digger import spiders
 import base_crawler
 import django
 import os
@@ -13,7 +14,6 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'api.settings'
 django.setup()
 
 # noinspection PyUnresolvedReferences
-from games_price_digger import spiders
 
 
 class PriceCrawler(base_crawler.Crawler):
@@ -21,14 +21,8 @@ class PriceCrawler(base_crawler.Crawler):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
     settings = get_project_settings()
     runner = CrawlerRunner(settings)
-    runner.crawl(spiders.epic_price.EpicPriceParser)
-    runner.crawl(spiders.gog_price.GogPriceParser)
-    runner.crawl(spiders.greenman_price.GreenManPriceSpider)
-    runner.crawl(spiders.microsoft_price.MicrosoftPriceSpider)
-    runner.crawl(spiders.nuuvem_price.NuuvemPriceParser)
-    runner.crawl(spiders.origin_price.OriginPriceSpider)
-    runner.crawl(spiders.rockstar_price.RockstarPriceSpider)
-    runner.crawl(spiders.ubisoft_price.UbisoftPriceSpider)
+    runner.crawl(spiders.steam_price.SteamPriceSpider)
+    runner.crawl(spiders.gog_price.GogPriceSpider)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
 

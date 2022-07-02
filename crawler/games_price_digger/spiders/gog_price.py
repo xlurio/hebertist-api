@@ -1,4 +1,4 @@
-""" import urllib.parse
+import urllib.parse
 
 from games_price_digger.spiders.interfaces.generic_spider import GenericSpider
 
@@ -18,4 +18,4 @@ class GogPriceSpider(GenericSpider):
     def _get_search_url(self, game):
         encoded_name = urllib.parse.quote(game)
         return (f'{self.start_urls[0]}games?query={encoded_name}' +
-                '&order=asc:title') """
+                '&order=asc:title')

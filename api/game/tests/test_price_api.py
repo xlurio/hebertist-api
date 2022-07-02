@@ -127,8 +127,8 @@ class PublicPriceAPITests(TestCase):
         expected_prices_id = get_lowest_prices_id(price_query)
         best_prices_query = PriceModel.objects.filter(
             id__in=expected_prices_id
-        ).order_by('price')
-        serializer = PriceSerializer(best_prices_query, many=True)
+        ).order_by('price')[:20]
+        serializer = PriceDetailSerializer(best_prices_query, many=True)
         res = self.client.get(BEST_PRICES_URL)
         self.assertEqual(res.data, serializer.data)
 
@@ -144,9 +144,9 @@ class PublicPriceAPITests(TestCase):
         name_to_search = 'rain'
         best_prices_query = best_prices_query.filter(
             game__name__icontains=name_to_search
-        )
+        )[:20]
 
-        serializer = PriceSerializer(best_prices_query, many=True)
+        serializer = PriceDetailSerializer(best_prices_query, many=True)
         res = self.client.get(BEST_PRICES_URL, {'game_name': name_to_search})
         try:
             self.assertEqual(res.data, serializer.data)

@@ -3,7 +3,7 @@ import urllib
 from games_price_digger.spiders.interfaces.generic_spider import GenericSpider
 
 
-class SteamPrice(GenericSpider):
+class SteamPriceSpider(GenericSpider):
     name = 'steam_price'
     store_name = 'Steam'
 
