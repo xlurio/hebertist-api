@@ -28,7 +28,7 @@ class SteamPriceTests(unittest.TestCase):
         )
         mocked_page_getter.get_page.return_value = self.fake_response
 
-        self.spider = GreenManSpider()
+        self.spider = GreenManPriceSpider()
         self.spider._name_getter = mocked_name_getter
         self.spider._page_getter = mocked_page_getter
 

@@ -5,9 +5,10 @@ from . import GenericSpider
 
 
 class GreenManPriceSpider(GenericSpider):
+    _testing_html_file = 'greenman_test.html'
+
     name = 'greenman_price'
     store_name = 'Greenman Gaming'
-
     game_box_xpath = 'div[@class="top-section"]'
     game_title_xpath = 'p[@class="prod-name"]'
     game_price_xpath = 'span[@class="current-price"]'
