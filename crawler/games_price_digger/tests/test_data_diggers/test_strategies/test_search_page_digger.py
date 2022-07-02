@@ -9,7 +9,7 @@ from games_price_digger.src.utils import TestHTMLGetter
 
 
 class SearchPageDiggingTests(unittest.TestCase):
-    price_digging_strategies = MagicMock(spec=PriceDiggingStrategy)
+    price_digging_strategy = MagicMock(spec=PriceDiggingStrategy)
     fake_response_builder = HTMLResponseBuilder()
     test_html_getter = TestHTMLGetter()
     fake_price = 2.99
@@ -17,9 +17,10 @@ class SearchPageDiggingTests(unittest.TestCase):
     item_link_xpath = '@href'
 
     def setUp(self):
-        self.price_digging_strategies.dig_data.return_value = self.fake_price
-        self.search_page_digging = SearchPageDigging()
-        self.search_page_digging.set_strategy(self.price_digging_strategies)
+        self.price_digging_strategy.dig_data.return_value = self.fake_price
+        self.search_page_digging = SearchPageDigging(
+            self.price_digging_strategy
+        )
 
         html_file_path = self.test_html_getter.get_html_file_by_name(
             'generic.html'

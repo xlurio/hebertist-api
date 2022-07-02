@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 
-class PageGettingStrategy(ABC):
+class DriveFactory(ABC):
 
     @abstractmethod
-    def get_page(self):
+    def make_driver(self, **kwargs):
         pass

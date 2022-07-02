@@ -4,6 +4,8 @@ from games_price_digger.spiders.interfaces.generic_spider import GenericSpider
 
 
 class GogPriceSpider(GenericSpider):
+    _testing_html_file = 'gog_test.html'
+
     name = 'gog_price'
     store_name = 'GOG.com'
 
@@ -15,7 +17,7 @@ class GogPriceSpider(GenericSpider):
     allowed_domains = ['www.gog.com']
     start_urls = ['https://www.gog.com/en/']
 
-    def _get_search_url(self, game):
+    def get_search_url(self, game):
         encoded_name = urllib.parse.quote(game)
         return (f'{self.start_urls[0]}games?query={encoded_name}' +
                 '&order=asc:title')

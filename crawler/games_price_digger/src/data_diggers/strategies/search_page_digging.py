@@ -9,7 +9,7 @@ from scrapy.http import Response
 
 class SearchPageDigging(DiggingStrategy):
 
-    def set_strategy(self, strategy: PriceDiggingStrategy) -> None:
+    def __init__(self, strategy: PriceDiggingStrategy) -> None:
         self._strategy = strategy
 
     def dig_data(self, **digging_parameters) -> dict:
