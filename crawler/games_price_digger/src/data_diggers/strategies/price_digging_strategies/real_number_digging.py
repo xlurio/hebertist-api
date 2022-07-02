@@ -15,13 +15,14 @@ class RealNumberDigging(PriceDiggingStrategy):
 
     def _clean_data(self, data):
         for item in data:
-            if 'R$' in item:
+            if '$' in item:
                 return item
         return ''
 
     def _format(self, price: str) -> float:
         numbers_only_price = self._extract_numbers(price)
         price_in_usa_notation = self._european_to_usa(numbers_only_price)
+
         try:
             return float(price_in_usa_notation)
         except ValueError:

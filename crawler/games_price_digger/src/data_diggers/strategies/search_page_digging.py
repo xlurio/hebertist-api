@@ -20,14 +20,18 @@ class SearchPageDigging(DiggingStrategy):
         item_title_xpath = digging_parameters.get('item_title_xpath')
         item_title_xpath = f'.//descendant::{item_title_xpath}/text()'
 
+        item_title_element = box.xpath(item_title_xpath)
+        item_title = item_title_element.get()
+        parsed_item_title = str(item_title)
+        stripped_item_title = parsed_item_title.strip()
+
         item_link_xpath = digging_parameters.get('item_link_xpath')
         item_link_xpath = f'.//{item_link_xpath}'
 
         item_link_element = box.xpath(item_link_xpath)
         item_link = item_link_element.get()
-
-        item_title_element = box.xpath(item_title_xpath)
-        item_title = item_title_element.get()
+        parsed_item_link = str(item_link)
+        stripped_item_link = parsed_item_link.strip()
 
         if self._strategy:
             item_price = self._strategy.dig_data(box)
@@ -35,9 +39,9 @@ class SearchPageDigging(DiggingStrategy):
             raise ValueError('A price digging strategy must be set')
 
         return {
-            'name': item_title,
+            'name': stripped_item_title,
             'price': item_price,
-            'link': item_link,
+            'link': stripped_item_link,
         }
 
     def _check_for_parameters(self, parameters: dict) -> None:

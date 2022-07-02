@@ -114,20 +114,13 @@ def update_game_model():
 class StoreModel(models.Model):
     """Model of the game stores objects"""
     name = models.CharField(max_length=254, unique=True)
-    link = models.URLField(unique=True)
+    link = models.URLField(null=True)
     image = models.ImageField(null=True, upload_to=get_image_path)
 
     class Meta:
         """Display the name of the store model on admin interface"""
         verbose_name = _('store')
         verbose_name_plural = _('stores')
-
-    def save(self, *args, **kwargs):
-        if not self.link:
-            self.link = f'https://{self.name}.com/'
-            super(StoreModel, self).save()
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
         """Defines the string form of the store objects as its name"""

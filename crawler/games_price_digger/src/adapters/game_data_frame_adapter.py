@@ -4,7 +4,15 @@ import pandas as pd
 class GameDataFrameAdapter:
 
     def __init__(self, dataframe: pd.DataFrame, game_name_column: str):
-        game_name_series = dataframe[game_name_column]
+        self._game_name_column = game_name_column
+        self._adapt_dataframe(dataframe)
+
+    def _adapt_dataframe(self, dataframe):
+        if len(dataframe.index) <= 0:
+            dataframe = pd.DataFrame({
+                self._game_name_column: ['nan']
+            })
+        game_name_series = dataframe[self._game_name_column]
         self._game_names = list(game_name_series)
 
     def yield_game_names(self):

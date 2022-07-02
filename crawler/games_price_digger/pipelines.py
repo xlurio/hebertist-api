@@ -3,7 +3,7 @@ from locale import LC_NUMERIC
 from games_price_digger import cleaners
 # noinspection PyUnresolvedReferences
 from core import models
-from decimal import Decimal
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def _get_params_for_price_object(item, model_class, does_exists, object_id,
@@ -44,77 +44,49 @@ class PricePipeline:
 
     def process_item(self, item, spider):
         try:
-            game_data = item.get('game')
-            search_data = item.get('search')
-
-            game = models.GameModel.objects.get_or_create(
-                name=search_data.get_game()
-            )[0]
-            store = models.StoreModel.objects.get_or_create(
-                name=search_data.get_store()
-            )[0]
-            price = game_data.get_price()
-            link = game_data.get_link()
-
-            self._create_price_object(
-                game, store, price, link
-            )
-
-            return {
-                'game': str(game_data),
-                'search': str(search_data),
-            }
-
+            return self._get_or_create_objects(item)
         except KeyError:
             return item
 
-    def _create_price_object(self, game, store, price, link):
+    def _get_or_create_objects(self, item):
+        game_data = item.get('game')
+        search_data = item.get('search')
+
+        self.game = models.GameModel.objects.get_or_create(
+            name=search_data.get_game()
+        )[0]
+        self.store = models.StoreModel.objects.get_or_create(
+            name=search_data.get_store()
+        )[0]
+        self.price = game_data.get_price()
+        self.link = game_data.get_link()
+
+        self._create_price_object()
+
+        return {
+            'game': str(game_data),
+            'search': str(search_data),
+        }
+
+    def _create_price_object(self):
         try:
-            price_object = models.PriceModel.objects.get(
-                game=game,
-                store=store,
-            )
-            setattr(price_object, 'price', price)
-            setattr(price_object, 'link', link)
-            price_object.save()
-        except Exception:
-            models.PriceModel.objects.create(
-                game=game,
-                store=store,
-                price=price,
-                link=link,
-            )
+            self._update_price_object()
+        except ObjectDoesNotExist:
+            self._create_price_object()
 
+    def _update_price_object(self):
+        price_object = models.PriceModel.objects.get(
+            game=self.game,
+            store=self.store,
+        )
+        setattr(price_object, 'price', self.price)
+        setattr(price_object, 'link', self.link)
+        price_object.save()
 
-""" class PricePipeline:
-
-    def process_item(self, item, spider):
-        if 'price_item' in item.keys():
-            cleaner = cleaners.PriceCleaner(item['price_item'])
-            game = _get_params_for_price_object(
-                item=item['price_item'],
-                model_class=models.GameModel,
-                does_exists=cleaner.does_game_exists(),
-                object_id=cleaner.get_game_id(),
-                field_name='game',
-            )
-            store = _get_params_for_price_object(
-                item=item['price_item'],
-                model_class=models.StoreModel,
-                does_exists=cleaner.does_store_exists(),
-                object_id=cleaner.get_store_id(),
-                field_name='store',
-            )
-            try:
-                price = models.PriceModel.objects.get(
-                    game=game,
-                    store=store,
-                )
-                setattr(price, 'price', cleaner.clean_price())
-            except models.PriceModel.DoesNotExist:
-                models.PriceModel.objects.create(
-                    game=game,
-                    store=store,
-                    price=cleaner.clean_price(),
-                )
-        return item """
+    def _create_price_object(self):
+        models.PriceModel.objects.create(
+            game=self.game,
+            store=self.store,
+            price=self.price,
+            link=self.link,
+        )
