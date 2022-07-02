@@ -1,0 +1,23 @@
+name: Testing before merge
+
+on:
+  pull_request:
+    branches: [ "main", "release*", "dev" ]
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build the docker-compose
+      run: make build
+      
+    - name: Test the crawler
+      run: make test-crawler
+      
+    - name: Test the API
+      run: make test-backend
