@@ -1,16 +1,15 @@
 import time
-import urllib.parse
 import pandas as pd
 
 from games_price_digger.src.adapters import GameDataFrameAdapter
-from games_price_digger.src.builders.found_game_builder import FoundGameBuilder
 from games_price_digger.src.builders.simple_extraction_builder import SimpleExtractionBuilder
 from games_price_digger.src.builders.search_builder import SearchBuilder
+from games_price_digger.src.components.game import Game
+from games_price_digger.src.components.search import Search
 from games_price_digger.src.data_diggers.data_digger import DataDigger
 from games_price_digger.src.data_diggers.strategies.price_digging_strategies.real_number_digging import RealNumberDigging
 from games_price_digger.src.data_diggers.strategies.search_page_digging import SearchPageDigging
 from games_price_digger.src.data_getters.page_data_extractor import PageDataExtractor
-from games_price_digger.src.data_getters.strategies.simple_extraction import SimpleExtraction
 from games_price_digger.src.game_name_getter import GameNamesGetter
 from games_price_digger.src.lists import GameBoxList
 from games_price_digger.src.page_getters.page_getter import PageGetter
@@ -61,24 +60,14 @@ class GenericSpider(Spider):
 
     def __init__(self):
         self.game_box_xpath = f'//{self.game_box_xpath}'
+        self._make_data_digger()
 
+    def _make_data_digger(self):
         _price_digging_strategy = self.get_price_digging_strategy()
         self._digging_strategy = self.digging_strategy_class(
             _price_digging_strategy
         )
         self._data_digger = DataDigger(self._digging_strategy)
-
-        self.extraction_strategy_builder.set_item_title_xpath(
-            self.game_title_xpath
-        )
-        self.extraction_strategy_builder.set_item_link_xpath(
-            self.game_link_xpath
-        )
-        self.extraction_strategy_builder.set_data_digger(
-            self._data_digger
-        )
-
-        self._search_builder.set_store(self.store_name)
 
     def get_price_digging_strategy(self):
         """Override this method to set the price digging strategy"""
@@ -86,19 +75,36 @@ class GenericSpider(Spider):
 
     def parse(self, response, **kwargs):
         for game in self._name_getter.yield_names(self._game_data):
+            self._make_search(game)
+            self._make_data_extractor()
 
-            self._search_builder.set_game(game)
-            self.search = self._search_builder.build()
-
-            self.extraction_strategy_builder.set_search(self.search)
-            simple_extraction = self.extraction_strategy_builder.build()
-
-            self.data_extractor = self._data_extractor_class(simple_extraction)
             response = self._check_for_test_environment(game, **kwargs)
 
             yield from self._parse_price(response)
 
             time.sleep(3)
+
+    def _make_search(self, game: str):
+        self._search_builder.set_store(self.store_name)
+        self._search_builder.set_game(game)
+        self.search = self._search_builder.build()
+
+    def _make_data_extractor(self):
+        digging_settings_builder = self._digging_strategy.make_settings_builder(
+            self.game_title_xpath,
+            self.game_link_xpath,
+        )
+
+        self.extraction_strategy_builder.set_settings_builder(
+            digging_settings_builder
+        )
+        self.extraction_strategy_builder.set_data_digger(
+            self._data_digger
+        )
+        self.extraction_strategy_builder.set_search(self.search)
+        simple_extraction = self.extraction_strategy_builder.build()
+
+        self.data_extractor = self._data_extractor_class(simple_extraction)
 
     def _check_for_test_environment(self, game, **kwargs):
         if kwargs.get('testing'):
@@ -149,7 +155,7 @@ class GenericSpider(Spider):
             iterator.next()
             there_is_items_in_list = not iterator.is_done()
 
-    def _validate_data(self, game, search):
+    def _validate_data(self, game: Game, search: Search):
         game_name = game.get_name()
         has_name = len(game_name) > 0
 
@@ -160,7 +166,13 @@ class GenericSpider(Spider):
         has_link = len(game_link) > 0
 
         if has_name and has_price and has_link:
+            game_link = self.validate_link(game_link)
+            game.set_link(game_link)
+
             yield {
                 'game': game,
                 'search': search,
             }
+
+    def validate_link(self, link):
+        return link

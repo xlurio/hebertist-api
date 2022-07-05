@@ -19,6 +19,9 @@ class FoundGame(Game):
     def get_link(self):
         return self._link
 
+    def set_link(self, link):
+        self._link = link
+
     def get_data(self) -> dict:
         return {
             'name': self._name,

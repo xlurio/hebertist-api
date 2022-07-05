@@ -11,13 +11,13 @@ mocked_name_getter = MagicMock(spec=GameNamesGetter)
 mocked_page_getter = MagicMock(spec=PageGetter)
 
 
-class SteamPriceTests(unittest.TestCase):
+class GreenManSpiderTests(unittest.TestCase):
     test_game_name = 'Borderlands 3'
     store = 'Greenman Gaming'
 
     def setUp(self) -> None:
         html_getter = TestHTMLGetter()
-        html_path = html_getter.get_html_file_by_name('steam_test.html')
+        html_path = html_getter.get_html_file_by_name('greenman_test.html')
 
         fake_response_builder = HTMLResponseBuilder()
         fake_response_builder.set_html_file_path(html_path)
@@ -26,11 +26,9 @@ class SteamPriceTests(unittest.TestCase):
         mocked_name_getter.yield_names.return_value = iter(
             [self.test_game_name]
         )
-        mocked_page_getter.get_page.return_value = self.fake_response
 
         self.spider = GreenManPriceSpider()
         self.spider._name_getter = mocked_name_getter
-        self.spider._page_getter = mocked_page_getter
 
     def test_parse(self):
         """Test parse() method"""
@@ -38,7 +36,8 @@ class SteamPriceTests(unittest.TestCase):
         self.then_it_should_yield_game_data(parsed_data)
 
     def when_data_is_parsed(self):
-        parsed_data = [data for data in self.spider.parse(self.fake_response)]
+        parsed_data = [data for data in self.spider.parse(self.fake_response,
+                                                          testing=True)]
         return parsed_data
 
     def then_it_should_yield_game_data(self, parsed_data):

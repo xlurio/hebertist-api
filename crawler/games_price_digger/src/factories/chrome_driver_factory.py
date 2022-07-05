@@ -11,6 +11,8 @@ class ChromeDriveFactory(DriveFactory):
     def make_driver(self, **kwargs):
         options = Options()
         options.add_argument('--headless')
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument('--no-sandbox')
         driver_binary = self._get_driver_path()
         service = Service(driver_binary)
         return webdriver.Chrome(service=service, options=options)
