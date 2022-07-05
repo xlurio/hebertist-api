@@ -47,6 +47,8 @@ class PricePipeline:
             return self._get_or_create_objects(item)
         except KeyError:
             return item
+        except AttributeError:
+            return item
 
     def _get_or_create_objects(self, item):
         game_data = item.get('game')

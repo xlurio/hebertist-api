@@ -15,4 +15,4 @@ class FoundGameBuilder:
         return self
 
     def build(self):
-        return FoundGame(self._name, self.price, self._link)
+        return FoundGame(self._name, self._price, self._link)

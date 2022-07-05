@@ -8,8 +8,6 @@ from games_price_digger.src.utils.test_html_getter import TestHTMLGetter
 
 mocked_name_getter = MagicMock(spec=GameNamesGetter)
 
-mocked_page_getter = MagicMock(spec=PageGetter)
-
 
 class SteamPriceTests(unittest.TestCase):
     test_game_name = 'My Time At Portia'
@@ -26,11 +24,9 @@ class SteamPriceTests(unittest.TestCase):
         mocked_name_getter.yield_names.return_value = iter(
             [self.test_game_name]
         )
-        mocked_page_getter.get_page.return_value = self.fake_response
 
         self.spider = SteamPriceSpider()
         self.spider._name_getter = mocked_name_getter
-        self.spider._page_getter = mocked_page_getter
 
     def test_parse(self):
         """Test parse() method"""
@@ -38,7 +34,12 @@ class SteamPriceTests(unittest.TestCase):
         self.then_it_should_yield_game_data(parsed_data)
 
     def when_data_is_parsed(self):
-        parsed_data = [data for data in self.spider.parse(self.fake_response)]
+        parsed_data = [
+            data for data in self.spider.parse(
+                self.fake_response,
+                testing=True
+            )
+        ]
         return parsed_data
 
     def then_it_should_yield_game_data(self, parsed_data):

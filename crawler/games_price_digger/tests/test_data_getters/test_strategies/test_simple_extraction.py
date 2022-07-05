@@ -1,6 +1,7 @@
 import logging
 import unittest
 from unittest.mock import MagicMock
+from games_price_digger.src.builders.search_page_settings_builder import SearchPageSettingsBuilder
 from games_price_digger.src.components import Search
 from games_price_digger.src.components.found_game import FoundGame
 from games_price_digger.src.data_diggers.strategies.search_page_digging import SearchPageDigging
@@ -39,12 +40,19 @@ class SimpleExtractionTests(unittest.TestCase):
         game_boxes = response.xpath(self.item_box_xpath)
         self.game_box_list = GameBoxList(*game_boxes)
 
+        settings_builder = self._make_settings_builder()
+
         self.simple_extraction = SimpleExtraction(
-            item_title_xpath='h2',
-            item_link_xpath='@href',
+            digging_settings_builder=settings_builder,
             search=self.search,
             data_digger=search_page_digging
         )
+
+    def _make_settings_builder(self):
+        builder = SearchPageSettingsBuilder()
+        builder.set_item_link_xpath('@href')
+        builder.set_item_title_xpath('h2')
+        return builder
 
     def test_extract_data(self):
         """Test extract_data() method"""

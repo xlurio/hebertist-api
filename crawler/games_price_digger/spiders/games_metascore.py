@@ -61,7 +61,6 @@ class GamesMetascoreSpider(scrapy.Spider):
                 'game_item': self._get_game_item(game_name, game_score),
             }
 
-    @staticmethod
     def _get_game_item(self, name, score):
         item = GameItem()
         item['name'] = name
