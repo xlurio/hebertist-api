@@ -20,6 +20,6 @@ class SimpleExtractionBuilder:
     def build(self):
         return SimpleExtraction(
             digging_settings_builder=self._settings_builder,
-            search=self._search,
+            search_items_list=self._search,
             data_digger=self._data_digger,
         )

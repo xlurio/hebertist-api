@@ -44,7 +44,7 @@ class SimpleExtractionTests(unittest.TestCase):
 
         self.simple_extraction = SimpleExtraction(
             digging_settings_builder=settings_builder,
-            search=self.search,
+            search_items_list=self.search,
             data_digger=search_page_digging
         )
 

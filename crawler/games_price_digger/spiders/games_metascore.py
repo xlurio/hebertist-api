@@ -1,14 +1,11 @@
 from core.models import GameModel
-from games_price_digger.items import GameItem
-import os
-import sys
 import django
 import pandas as pd
 import scrapy
+from games_price_digger.src.components.game import Game
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.join(BASE_DIR, '../../../api'))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'api.settings'
+from games_price_digger.src.components.meta_game import MetaGame
+
 django.setup()
 
 
@@ -28,15 +25,16 @@ class GamesMetascoreSpider(scrapy.Spider):
         'metascore'
     ]
 
-    game_item_box = 'div[starts-with(@class, "browse_list_wrapper")]'
-    game_item_row = 'tr[not(@class="spacer")]'
-    game_item_score = 'div[starts-with(@class, "metascore_w")]'
+    game_box_xpath = (
+        'div[starts-with(@class, "browse_list_wrapper")]'
+        '/descendant::tr[not(@class="spacer")]'
+    )
+    game_score_xpath = 'div[starts-with(@class, "metascore_w")]'
+    game_image_xpath = 'img'
 
     def parse(self, response, **kwargs):
         # Get game boxes
-        game_boxes = response.xpath(
-            f'//{self.game_item_box}/descendant::{self.game_item_row}'
-        )
+        game_boxes = response.xpath(self.game_box_xpath)
 
         # Get name and score of each game on the page
         if game_boxes:
@@ -52,17 +50,25 @@ class GamesMetascoreSpider(scrapy.Spider):
             game_name = game.xpath('.//descendant::h3/text()')
             game_name = str(game_name.get()).strip()
 
-            game_score = game.xpath(
-                f'.//descendant::{self.game_item_score}/text()'
+            game_score_element = game.xpath(
+                f'.//descendant::{self.game_score_xpath}/text()'
             )
-            game_score = str(game_score.get()).strip()
+            scraped_game_score = game_score_element.get()
+            scraped_game_score = str(scraped_game_score)
+            stripped_game_score = scraped_game_score.strip()
+            game_score = int(stripped_game_score)
 
-            yield {
-                'game_item': self._get_game_item(game_name, game_score),
-            }
+            game_image_element = game.xpath(
+                f'.//descendant::{self.game_image_xpath}/@src'
+            )
+            game_image_url = game_image_element.get()
+            game_image_url = str(game_image_url)
+            stripped_game_image_url = game_image_url.strip()
 
-    def _get_game_item(self, name, score):
-        item = GameItem()
-        item['name'] = name
-        item['score'] = score
-        return item
+            game_data = MetaGame(
+                name=game_name,
+                score=game_score,
+                image=stripped_game_image_url,
+            )
+
+            yield game_data

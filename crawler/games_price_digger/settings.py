@@ -6,15 +6,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-import os
-import sys
 
-# Set the Django project to PYTHONPATH
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(os.path.join(BASE_DIR, '../../api'))
-# Set environment variable DJANGO_SETTINGS_MODULE to 'api.settings'
-os.environ['DJANGO_SETTINGS_MODULE'] = 'api.settings'
-# Setup Django to Scrapy project
 import django
 
 django.setup()

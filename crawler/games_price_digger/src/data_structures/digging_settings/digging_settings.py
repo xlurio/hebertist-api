@@ -2,4 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class DiggingSettings(ABC):
-    pass
+
+    @abstractmethod
+    def make_item(self, **kwargs):
+        pass

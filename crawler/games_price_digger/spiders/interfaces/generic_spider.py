@@ -1,5 +1,6 @@
 import time
 import pandas as pd
+import django
 
 from games_price_digger.src.adapters import GameDataFrameAdapter
 from games_price_digger.src.builders.simple_extraction_builder import SimpleExtractionBuilder
@@ -14,7 +15,7 @@ from games_price_digger.src.game_name_getter import GameNamesGetter
 from games_price_digger.src.lists import GameBoxList
 from games_price_digger.src.page_getters.page_getter import PageGetter
 from games_price_digger.src.page_getters.strategies import SimplePage
-
+from django.core.exceptions import AppRegistryNotReady
 from scrapy import Spider
 from games_price_digger.src.utils.fake_response_builders.html_response_builder import HTMLResponseBuilder
 
@@ -22,19 +23,13 @@ from games_price_digger.src.utils.test_html_getter import TestHTMLGetter
 
 try:
     from core.models import GameModel
-except ModuleNotFoundError:
-    pass
+except AppRegistryNotReady:
+    django.setup()
+    from core.models import GameModel
 
 
 class GenericSpider(Spider):
-    try:
-        _games_in_database = GameModel.objects.all().values()
-
-    except NameError:
-        _games_in_database = pd.DataFrame({
-            'name': ['error'],
-            'price': ['0.00'],
-        })
+    _games_in_database = GameModel.objects.all().values()
 
     _testing_html_file = None
 

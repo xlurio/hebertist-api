@@ -106,7 +106,7 @@ def update_game_model():
     """Updates the game model data"""
     sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
     # noinspection PyUnresolvedReferences
-    from crawler.game_crawler import GameCrawler
+    from game_crawler import GameCrawler
     crawler = GameCrawler()
     crawler.run_crawler()
 
@@ -151,7 +151,7 @@ def update_price_model():
     """Updates the game model data"""
     sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
     # noinspection PyUnresolvedReferences
-    from crawler.price_crawler import PriceCrawler
+    from price_crawler import PriceCrawler
     crawler = PriceCrawler()
     crawler.run_crawler()
 

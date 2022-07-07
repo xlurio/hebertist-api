@@ -11,6 +11,7 @@ RUN python3 -m pip install --upgrade pip && \
 WORKDIR /api
 COPY ./crawler /crawler
 COPY ./api /api
+RUN python3 -m pip install -e /crawler
 
 RUN useradd -ms /bin/bash user
 RUN chown -R user .
