@@ -18,24 +18,30 @@ class SearchPageDigging(DiggingStrategy):
         return builder
 
     def dig_data(self, settings: SearchPageSettings) -> dict:
-        box = settings.get_item_box()
+        self.box = settings.get_item_box()
 
         item_title_xpath = settings.get_item_title_xpath()
-        item_title_element = box.xpath(item_title_xpath)
-        item_title = item_title_element.get()
-        parsed_item_title = str(item_title)
-        stripped_item_title = parsed_item_title.strip()
+        item_title = self._make_item_title(item_title_xpath)
 
         item_link_xpath = settings.get_item_link_xpath()
-        item_link_element = box.xpath(item_link_xpath)
-        item_link = item_link_element.get()
-        parsed_item_link = str(item_link)
-        stripped_item_link = parsed_item_link.strip()
+        item_link = self._make_item_link(item_link_xpath)
 
-        item_price = self._strategy.dig_data(box)
+        item_price = self._strategy.dig_data(self.box)
 
         return {
-            'name': stripped_item_title,
+            'name': item_title,
             'price': item_price,
-            'link': stripped_item_link,
+            'link': item_link,
         }
+
+    def _make_item_title(self, item_title_xpath):
+        item_title_element = self.box.xpath(item_title_xpath)
+        item_title = item_title_element.get()
+        parsed_item_title = str(item_title)
+        return parsed_item_title.strip()
+
+    def _make_item_link(self, item_link_xpath):
+        item_link_element = self.box.xpath(item_link_xpath)
+        item_link = item_link_element.get()
+        parsed_item_link = str(item_link)
+        return parsed_item_link.strip()

@@ -48,11 +48,18 @@ class MetaGame(Game):
     def get_image(self):
         return self._image
 
+    def get_data(self):
+        return {
+            'name': self._name,
+            'score': self._score,
+            'image': self._image,
+        }
+
     def __str__(self) -> str:
         return (
-            '{\n',
-            f'\tname: "{self._name}"\n',
-            f'\tscore: "{self._score}"\n',
-            f'\timage: "{self._image}"\n',
+            '{\n' +
+            f'\tname: "{self._name}",\n' +
+            f'\tscore: "{self._score}",\n' +
+            f'\timage: "{self._image}",\n' +
             '}'
         )

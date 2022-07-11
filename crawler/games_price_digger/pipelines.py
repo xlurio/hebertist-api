@@ -1,23 +1,76 @@
+import os
 from core import models
 from django.core.exceptions import ObjectDoesNotExist
+
+from games_price_digger.src.image_downloaders.image_downloader import ImageDownloader
 
 
 class GamePipeline:
 
     def process_item(self, item, _):
         try:
-            return self._create_object(item)
-        except AttributeError:
+            item = item.get('game_metadata')
+            return self._get_or_create_object(item)
+        except KeyError:
             return item
+
+    def _get_or_create_object(self, item):
+        try:
+            return self._update_object(item)
+
+        except ObjectDoesNotExist:
+            return self._create_object(item)
 
     def _create_object(self, item):
         game_name = item.get_name()
         game_score = item.get_score()
         game_image = item.get_image()
+        image_path = self._get_image_path(game_image)
+
         models.GameModel.objects.create(
-            name=game_name, score=game_score, image=game_image
+            name=game_name, score=game_score, image=image_path
         )
-        return item
+
+        return {
+            'name': game_name,
+            'score': game_score,
+            'image': image_path,
+        }
+
+    def _get_image_destination_folder(self):
+        current_module = os.path.dirname(__file__)
+        module_path = os.path.abspath(current_module)
+        root_folder = os.path.join(module_path, '../../')
+        destination_folder = os.path.join(root_folder, './api/uploads/game')
+        return os.path.abspath(destination_folder)
+
+    def _update_object(self, item):
+        game_name = item.get_name()
+        game_score = item.get_score()
+        game_image = item.get_image()
+        image_path = self._get_image_path(game_image)
+
+        game = models.GameModel.objects.get(
+            name=game_name
+        )
+        setattr(game, 'score', game_score)
+        setattr(game, 'image', image_path)
+        game.save()
+
+        return {
+            'name': game_name,
+            'score': game_score,
+            'image': image_path,
+        }
+
+    def _get_image_path(self, url):
+        destination_folder = self._get_image_destination_folder()
+        downloader = ImageDownloader(destination_folder)
+
+        downloader.download(url)
+        image_filename = downloader.get_filename()
+        image_path = os.path.join('uploads/game', image_filename)
+        return image_path
 
 
 class PricePipeline:

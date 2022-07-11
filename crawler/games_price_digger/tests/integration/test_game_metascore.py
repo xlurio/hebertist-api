@@ -18,7 +18,7 @@ class GamesMetascoreSpiderTests(unittest.TestCase):
         self._then_data_must_be_in(results)
 
     def _when_data_is_parsed(self):
-        return self.spider.parse(self.fake_response)
+        return self.spider.parse(self.fake_response, testing=True)
 
     def _then_data_must_be_in(self, game_data):
         expected_amount = 100

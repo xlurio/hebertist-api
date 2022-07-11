@@ -13,6 +13,7 @@ from games_price_digger.src.data_diggers.strategies.search_page_digging import S
 from games_price_digger.src.data_getters.page_data_extractor import PageDataExtractor
 from games_price_digger.src.game_name_getter import GameNamesGetter
 from games_price_digger.src.lists import GameBoxList
+from games_price_digger.src.lists.search_game_list import SearchGameList
 from games_price_digger.src.page_getters.page_getter import PageGetter
 from games_price_digger.src.page_getters.strategies import SimplePage
 from django.core.exceptions import AppRegistryNotReady
@@ -90,16 +91,25 @@ class GenericSpider(Spider):
             self.game_link_xpath,
         )
 
+        search_games_list = self.make_games_list()
+
         self.extraction_strategy_builder.set_settings_builder(
             digging_settings_builder
         )
         self.extraction_strategy_builder.set_data_digger(
             self._data_digger
         )
-        self.extraction_strategy_builder.set_search(self.search)
-        simple_extraction = self.extraction_strategy_builder.build()
+        self.extraction_strategy_builder.set_search_items_list(
+            search_games_list
+        )
+        extraction_strategy = self.extraction_strategy_builder.build()
 
-        self.data_extractor = self._data_extractor_class(simple_extraction)
+        self.data_extractor = self._data_extractor_class(extraction_strategy)
+
+    def make_games_list(self):
+        """Override this method to set the games list for the extraction 
+        strategy"""
+        return SearchGameList(self.search)
 
     def _check_for_test_environment(self, game, **kwargs):
         if kwargs.get('testing'):

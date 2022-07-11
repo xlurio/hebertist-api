@@ -18,13 +18,22 @@ django.setup()
 
 class PriceCrawler(base_crawler.Crawler):
     """Crawls the game prices"""
-    configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
-    settings = get_project_settings()
-    runner = CrawlerRunner(settings)
-    runner.crawl(spiders.steam_price.SteamPriceSpider)
-    runner.crawl(spiders.gog_price.GogPriceSpider)
-    d = runner.join()
-    d.addBoth(lambda _: reactor.stop())
+    spiders = (
+        spiders.steam_price.SteamPriceSpider,
+        spiders.gog_price.GogPriceSpider,
+        spiders.greenman_price.GreenManPriceSpider,
+    )
+
+    def __init__(self, ):
+        configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
+        settings = get_project_settings()
+        runner = CrawlerRunner(settings)
+
+        for spider in self.spiders:
+            runner.crawl(spider)
+
+        d = runner.join()
+        d.addBoth(lambda _: reactor.stop())
 
 
 if __name__ == '__main__':
