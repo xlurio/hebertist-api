@@ -1,5 +1,5 @@
 # utils
-run_command_on = docker-compose run --rm
+run_command_on = docker-compose -f docker-compose.dev.yml run --rm
 on_shell = sh -c
 manage = python manage.py
 crawl = scrapy crawl
@@ -10,6 +10,7 @@ crawler = crawler $(on_shell)
 
 # commands
 crawl_games = python game_crawler.py
+crawl_prices = python price_crawler.py
 crawl_gog = $(crawl) gog_price
 crawl_steam = "(crawl) steam_price
 
@@ -27,6 +28,9 @@ build:
 crawl-games:
 	${run_command_on} ${crawler} "${crawl_games}"; \
 	docker-compose down
+
+crawl-prices:
+	$(run_command_on) ${crawler} "${crawl_prices}"
 
 crawl-gog:
 	${run_command_on} ${crawler} "${crawl_gog}"; \
