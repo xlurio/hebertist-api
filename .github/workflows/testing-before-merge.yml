@@ -16,6 +16,9 @@ jobs:
       - name: Build the docker-compose
         run: make build
 
+      - name: Migrate database
+        run: make migrate
+
       - name: Test the crawler
         run: make test-crawler
 

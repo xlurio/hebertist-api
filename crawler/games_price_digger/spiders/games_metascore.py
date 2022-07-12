@@ -79,7 +79,6 @@ class GamesMetascoreSpider(scrapy.Spider):
             current_index = iterator.get_index()
             current_item = game_list.get_item_at(current_index)
             yield from self._validate_item(current_item)
-            time.sleep(3)
 
             iterator.next()
 

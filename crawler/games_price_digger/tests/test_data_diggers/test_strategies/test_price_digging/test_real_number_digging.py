@@ -16,7 +16,7 @@ class RealNumberDiggingTests(unittest.TestCase):
         self.fake_response_builder.set_html_file_path(html_file_path)
         response = self.fake_response_builder.build()
 
-        item_box_xpath = '//div[@id = "item-price-title-box"]'
+        item_box_xpath = '//div[@id = "item-price-box"]'
         self.item_box = response.xpath(item_box_xpath)
 
         price_xpath = 'p[@id = "real-number-price"]'

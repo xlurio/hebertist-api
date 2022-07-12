@@ -1,4 +1,5 @@
 import os
+import time
 from core import models
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -31,6 +32,8 @@ class GamePipeline:
             name=game_name, score=game_score, image=image_path
         )
 
+        time.sleep(3)
+
         return {
             'name': game_name,
             'score': game_score,
@@ -56,6 +59,8 @@ class GamePipeline:
         setattr(game, 'score', game_score)
         setattr(game, 'image', image_path)
         game.save()
+
+        time.sleep(3)
 
         return {
             'name': game_name,

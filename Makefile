@@ -16,6 +16,8 @@ crawl_steam = "(crawl) steam_price
 make_migrations = $(manage) makemigrations core && \
 									$(manage) migrate
 
+migrate = $(manage) migrate
+
 test_backend = $(manage) test && flake8
 test_crawler = python -m unittest
 
@@ -39,6 +41,9 @@ dismiss:
 
 make-migrations:
 	$(run_command_on) $(backend) "$(make_migrations)"
+
+migrate:
+	$(run_command_on) $(backend) "$(migrate)"
 
 run:
 	docker-compose up

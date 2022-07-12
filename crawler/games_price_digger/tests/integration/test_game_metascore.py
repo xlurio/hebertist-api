@@ -14,7 +14,8 @@ class GamesMetascoreSpiderTests(unittest.TestCase):
 
     def test_parsing(self):
         """Test parse() method"""
-        results = [result for result in self._when_data_is_parsed()]
+        results = [result.get('game_metadata')
+                   for result in self._when_data_is_parsed()]
         self._then_data_must_be_in(results)
 
     def _when_data_is_parsed(self):
