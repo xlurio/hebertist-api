@@ -1,5 +1,6 @@
 # utils
-run_command_on = docker-compose -f docker-compose.dev.yml run --rm
+run_command_on = docker-compose -f docker-compose.yml \
+								 -f docker-compose.dev.yml run --rm
 on_shell = sh -c
 manage = python manage.py
 crawl = scrapy crawl
