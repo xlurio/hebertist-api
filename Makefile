@@ -1,6 +1,6 @@
 # utils
-run_command_on = docker-compose -f docker-compose.yml \
-								 -f docker-compose.dev.yml run --rm
+docker_compose = docker-compose -f docker-compose.yml -f docker-compose.dev.yml
+run_command_on = $(docker_compose) run --rm
 on_shell = sh -c
 manage = python manage.py
 crawl = scrapy crawl
@@ -24,25 +24,25 @@ test_backend = $(manage) test && flake8
 test_crawler = python -m unittest
 
 build:
-	docker-compose build
+	$(docker_compose) build
 
 crawl-games:
 	${run_command_on} ${crawler} "${crawl_games}"; \
-	docker-compose down
+	$(docker_compose) down
 
 crawl-prices:
 	$(run_command_on) ${crawler} "${crawl_prices}"
 
 crawl-gog:
 	${run_command_on} ${crawler} "${crawl_gog}"; \
-	docker-compose down
+	$(docker_compose) down
 
 crawl-steam:
 	${run_command_on} ${crawler} "${crawl_steam}"; \
-	docker-compose down
+	$(docker_compose) down
 
 dismiss:
-	docker-compose down
+	$(docker_compose) down
 
 make-migrations:
 	$(run_command_on) $(backend) "$(make_migrations)"
@@ -51,12 +51,12 @@ migrate:
 	$(run_command_on) $(backend) "$(migrate)"
 
 run:
-	docker-compose up
+	$(docker_compose) up
 
 test-all:
 	$(run_command_on) $(backend) "$(test_backend)"; \
 	$(run_command_on) $(crawler) "$(test_crawler)"; \
-	docker-compose down
+	$(docker_compose) down
 
 test-backend:
 	$(run_command_on) $(backend) "$(test_backend)"
