@@ -7,9 +7,9 @@ services:
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=api
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      POSTGRES_DB: "api"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "pass"
 
   api:
     build:
@@ -23,9 +23,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - POSTGRES_NAME=api
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      POSTGRES_DB: "api"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "pass"
     depends_on:
       - db
 
@@ -37,8 +37,9 @@ services:
       - ./api:/api
       - ./crawler:/crawler
     environment:
-      - POSTGRES_NAME=api
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
+      POSTGRES_DB: "api"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "pass"
+      DJANGO_SETTINGS_MODULE: "api.settings"
     depends_on:
       - db

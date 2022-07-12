@@ -1,4 +1,6 @@
 from scrapy import Selector
+
+from games_price_digger.src.components.found_game import FoundGame
 from . import DiggingSettings
 
 
@@ -18,3 +20,6 @@ class SearchPageSettings(DiggingSettings):
 
     def get_item_link_xpath(self):
         return self._item_link_xpath
+
+    def make_item(self, **kwargs):
+        return FoundGame(**kwargs)

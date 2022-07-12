@@ -1,48 +1,86 @@
-# noinspection PyUnresolvedReferences
-from locale import LC_NUMERIC
-from games_price_digger import cleaners
-# noinspection PyUnresolvedReferences
+import os
+import time
 from core import models
 from django.core.exceptions import ObjectDoesNotExist
 
-
-def _get_params_for_price_object(item, model_class, does_exists, object_id,
-                                 field_name):
-    """Returns a object to create a price objects"""
-    if not does_exists:
-        return model_class.objects.create(
-            name=item[field_name]
-        )
-    return model_class.objects.get(
-        id=object_id
-    )
+from games_price_digger.src.image_downloaders.image_downloader import ImageDownloader
 
 
 class GamePipeline:
-    """Pipeline that cleans the game information from Metacritic and saves
-    in the games query"""
 
-    def process_item(self, item, spider):
-        if 'game_item' in item.keys():
-            cleaner = cleaners.GameCleaner(item['game_item'])
-            if cleaner.does_exists():
-                game = models.GameModel.objects.get(
-                    id=cleaner.get_game_id()
-                )
-                setattr(game, 'score', cleaner.clean_score())
-                game.save()
-                return item
+    def process_item(self, item, _):
+        try:
+            item = item.get('game_metadata')
+            return self._get_or_create_object(item)
+        except KeyError:
+            return item
 
-            models.GameModel.objects.create(
-                name=item['game_item']['name'],
-                score=cleaner.clean_score(),
-            )
-        return item
+    def _get_or_create_object(self, item):
+        try:
+            return self._update_object(item)
+
+        except ObjectDoesNotExist:
+            return self._create_object(item)
+
+    def _create_object(self, item):
+        game_name = item.get_name()
+        game_score = item.get_score()
+        game_image = item.get_image()
+        image_path = self._get_image_path(game_image)
+
+        models.GameModel.objects.create(
+            name=game_name, score=game_score, image=image_path
+        )
+
+        time.sleep(3)
+
+        return {
+            'name': game_name,
+            'score': game_score,
+            'image': image_path,
+        }
+
+    def _get_image_destination_folder(self):
+        current_module = os.path.dirname(__file__)
+        module_path = os.path.abspath(current_module)
+        root_folder = os.path.join(module_path, '../../')
+        destination_folder = os.path.join(root_folder, './api/uploads/game')
+        return os.path.abspath(destination_folder)
+
+    def _update_object(self, item):
+        game_name = item.get_name()
+        game_score = item.get_score()
+        game_image = item.get_image()
+        image_path = self._get_image_path(game_image)
+
+        game = models.GameModel.objects.get(
+            name=game_name
+        )
+        setattr(game, 'score', game_score)
+        setattr(game, 'image', image_path)
+        game.save()
+
+        time.sleep(3)
+
+        return {
+            'name': game_name,
+            'score': game_score,
+            'image': image_path,
+        }
+
+    def _get_image_path(self, url):
+        destination_folder = self._get_image_destination_folder()
+        downloader = ImageDownloader(destination_folder)
+
+        downloader.download(url)
+        image_filename = downloader.get_filename()
+        image_path = os.path.join('uploads/game', image_filename)
+        return image_path
 
 
 class PricePipeline:
 
-    def process_item(self, item, spider):
+    def process_item(self, item, _):
         try:
             return self._get_or_create_objects(item)
         except KeyError:

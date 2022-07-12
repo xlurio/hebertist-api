@@ -21,7 +21,7 @@ class SimpleExtractionBuilderTests(unittest.TestCase):
 
     def test_building_method(self):
         """Test building SimpleExtraction"""
-        self.builder.set_search(self.search)
+        self.builder.set_search_items_list(self.search)
         self.builder.set_data_digger(self.data_digger)
         self.builder.set_settings_builder(self.settings_builder)
         product = self.builder.build()

@@ -7,6 +7,7 @@ from games_price_digger.src.components.found_game import FoundGame
 from games_price_digger.src.data_diggers.strategies.search_page_digging import SearchPageDigging
 from games_price_digger.src.data_getters.strategies import SimpleExtraction
 from games_price_digger.src.lists.game_box_list import GameBoxList
+from games_price_digger.src.lists.search_game_list import SearchGameList
 from games_price_digger.src.utils.fake_response_builders.html_response_builder import HTMLResponseBuilder
 from games_price_digger.src.utils.test_html_getter import TestHTMLGetter
 
@@ -41,10 +42,11 @@ class SimpleExtractionTests(unittest.TestCase):
         self.game_box_list = GameBoxList(*game_boxes)
 
         settings_builder = self._make_settings_builder()
+        search_items_list = SearchGameList(self.search)
 
         self.simple_extraction = SimpleExtraction(
             digging_settings_builder=settings_builder,
-            search=self.search,
+            search_items_list=search_items_list,
             data_digger=search_page_digging
         )
 

@@ -4,3 +4,4 @@ from .dynamic_search_page_settings_builder import DynamicSearchPageSettingsBuild
 from .found_game_builder import FoundGameBuilder
 from .search_builder import SearchBuilder
 from .search_page_settings_builder import SearchPageSettingsBuilder
+from .meta_data_settings_builder import MetaDataSettingsBuilder

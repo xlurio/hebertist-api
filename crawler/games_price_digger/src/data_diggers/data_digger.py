@@ -7,5 +7,5 @@ class DataDigger:
     def __init__(self, strategy: DiggingStrategy):
         self._strategy = strategy
 
-    def dig_data(self, settings: DiggingSettings):
+    def dig_data(self, settings: DiggingSettings) -> dict:
         return self._strategy.dig_data(settings)
