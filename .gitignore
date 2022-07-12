@@ -131,3 +131,6 @@ dmypy.json
 # Temporary folders
 /data/
 /.idea/
+
+# Uploaded images of the API
+api/uploads/game/
