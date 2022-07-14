@@ -2,7 +2,7 @@ from ast import parse
 import unittest
 from unittest.mock import MagicMock
 from games_price_digger.spiders.gog_price import GogPriceSpider
-from games_price_digger.src.game_name_getter.game_names_getter import GameNamesGetter
+from games_price_digger.src.game_name_getters.game_names_getter import GameNamesGetter
 from games_price_digger.src.page_getters.page_getter import PageGetter
 from games_price_digger.src.utils.fake_response_builders.html_response_builder import HTMLResponseBuilder
 from games_price_digger.src.utils.test_html_getter import TestHTMLGetter

@@ -11,7 +11,7 @@ from games_price_digger.src.data_diggers.data_digger import DataDigger
 from games_price_digger.src.data_diggers.strategies.price_digging_strategies.real_number_digging import RealNumberDigging
 from games_price_digger.src.data_diggers.strategies.search_page_digging import SearchPageDigging
 from games_price_digger.src.data_getters.page_data_extractor import PageDataExtractor
-from games_price_digger.src.game_name_getter import GameNamesGetter
+from games_price_digger.src.game_name_getters import GameNamesGetter
 from games_price_digger.src.lists import GameBoxList
 from games_price_digger.src.lists.search_game_list import SearchGameList
 from games_price_digger.src.page_getters.page_getter import PageGetter
