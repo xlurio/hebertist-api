@@ -2,11 +2,13 @@ import os
 import time
 from core import models
 from django.core.exceptions import ObjectDoesNotExist
+from games_price_digger.src.adapters.file_deleter import FileDeleter
 
 from games_price_digger.src.image_downloaders.image_downloader import ImageDownloader
 
 
 class GamePipeline:
+    _model_manager = models.GameModel.objects
 
     def process_item(self, item, _):
         try:
@@ -28,7 +30,7 @@ class GamePipeline:
         game_image = item.get_image()
         image_path = self._get_image_path(game_image)
 
-        models.GameModel.objects.create(
+        self._model_manager.create(
             name=game_name, score=game_score, image=image_path
         )
 
@@ -49,15 +51,20 @@ class GamePipeline:
 
     def _update_object(self, item):
         game_name = item.get_name()
-        game_score = item.get_score()
-        game_image = item.get_image()
-        image_path = self._get_image_path(game_image)
-
-        game = models.GameModel.objects.get(
+        game = self._model_manager.get(
             name=game_name
         )
-        setattr(game, 'score', game_score)
+
+        old_image = getattr(game, 'image')
+        self._delete_old_image(old_image)
+
+        new_image = item.get_image()
+        image_path = self._get_image_path(new_image)
         setattr(game, 'image', image_path)
+
+        game_score = item.get_score()
+        setattr(game, 'score', game_score)
+
         game.save()
 
         time.sleep(3)
@@ -67,6 +74,9 @@ class GamePipeline:
             'score': game_score,
             'image': image_path,
         }
+
+    def _delete_old_image(self, old_image_path):
+        FileDeleter().delete(old_image_path)
 
     def _get_image_path(self, url):
         destination_folder = self._get_image_destination_folder()
