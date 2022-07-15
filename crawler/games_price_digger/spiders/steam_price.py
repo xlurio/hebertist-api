@@ -21,5 +21,5 @@ class SteamPriceSpider(GenericSpider):
 
     def get_search_url(self, game):
         encoded_name = urllib.parse.quote(game)
-        return (f'{self.start_urls[0]}search/?term={encoded_name}' +
+        return (f'{self.start_urls[0]}search/?cc=br&term={encoded_name}' +
                 '&category1=998')
