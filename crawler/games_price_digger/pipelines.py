@@ -20,8 +20,13 @@ class GamePipeline:
 
             os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
             return processed_item
+
         except KeyError:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
             return item
+
+        finally:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
 
     def _get_or_create_object(self, item):
         try:
@@ -101,11 +106,22 @@ class PricePipeline:
 
     def process_item(self, item, _):
         try:
-            return self._get_or_create_objects(item)
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
+            processed_item = self._get_or_create_objects(item)
+
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return processed_item
+
         except KeyError:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
             return item
+
         except AttributeError:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
             return item
+
+        finally:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
 
     def _get_or_create_objects(self):
         try:
