@@ -1,6 +1,9 @@
-from games_price_digger.src.builders.search_page_settings_builder import SearchPageSettingsBuilder
-from games_price_digger.src.data_diggers.strategies.price_digging_strategies.price_digging_strategy import PriceDiggingStrategy
-from games_price_digger.src.data_structures.digging_settings.search_page_settings import SearchPageSettings
+from games_price_digger.src.builders.search_page_settings_builder import \
+    SearchPageSettingsBuilder
+from games_price_digger.src.data_diggers.strategies.price_digging_strategies \
+    .price_digging_strategy import PriceDiggingStrategy
+from games_price_digger.src.data_structures.digging_settings \
+    .search_page_settings import SearchPageSettings
 from . import DiggingStrategy
 
 

@@ -1,5 +1,6 @@
 from games_price_digger.src.data_diggers.strategies import DiggingStrategy
-from games_price_digger.src.data_structures.digging_settings.digging_settings import DiggingSettings
+from games_price_digger.src.data_structures.digging_settings \
+    .digging_settings import DiggingSettings
 
 
 class DataDigger:

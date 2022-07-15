@@ -3,14 +3,19 @@
 
 # from games_price_digger.src.adapters import GameDataFrameAdapter
 # from games_price_digger.src.builders.game_builder import GameBuilder
-# from games_price_digger.src.builders.simple_extraction_builder import SimpleExtractionBuilder
+# from games_price_digger.src.builders.simple_extraction_builder import \
+# SimpleExtractionBuilder
 # from games_price_digger.src.builders.search_builder import SearchBuilder
 # from games_price_digger.src.data_diggers.data_digger import DataDigger
-# from games_price_digger.src.data_diggers.strategies.price_digging_strategies.real_number_digging import RealNumberDigging
-# from games_price_digger.src.data_diggers.strategies.search_page_digging import SearchPageDigging
-# from games_price_digger.src.data_getters.page_data_extractor import PageDataExtractor
+# from games_price_digger.src.data_diggers.strategies \
+# .price_digging_strategies.real_number_digging import RealNumberDigging
+# from games_price_digger.src.data_diggers.strategies.search_page_digging \
+# import SearchPageDigging
+# from games_price_digger.src.data_getters.page_data_extractor import \
+# PageDataExtractor
 # from games_price_digger.src.data_getters.strategies import simple_extraction
-# from games_price_digger.src.data_getters.strategies.simple_extraction import SimpleExtraction
+# from games_price_digger.src.data_getters.strategies.simple_extraction \
+# import SimpleExtraction
 # from games_price_digger.src.game_name_getter import GameNamesGetter
 # from games_price_digger.src.lists import GameBoxList
 # from games_price_digger.src.page_getters.page_getter import PageGetter
@@ -72,7 +77,9 @@
 
 #             self._simple_extraction_builder.set_response(response)
 #             self._simple_extraction_builder.set_search(search)
-#             self._simple_extraction_builder.set_data_digger(self._data_digger)
+#             self._simple_extraction_builder.set_data_digger(\
+# self._data_digger
+# )
 #             simple_extraction = self._simple_extraction_builder.build()
 #             self._data_extractor.set_strategy(simple_extraction)
 

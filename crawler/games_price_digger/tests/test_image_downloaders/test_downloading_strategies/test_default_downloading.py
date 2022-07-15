@@ -1,7 +1,7 @@
 import os
 import unittest
 import tempfile
-from unittest.mock import Mock, PropertyMock
+from unittest.mock import Mock
 from games_price_digger.src.image_downloaders.downloading_strategies \
     .default_downloading import DefaultDownloading
 

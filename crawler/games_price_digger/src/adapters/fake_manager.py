@@ -1,6 +1,3 @@
-import warnings
-
-
 class FakeManager:
 
     def __init__(self, model, data):

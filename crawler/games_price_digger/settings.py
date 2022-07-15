@@ -8,7 +8,6 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 import django
-from twisted.internet.error import ReactorAlreadyInstalledError
 
 django.setup()
 

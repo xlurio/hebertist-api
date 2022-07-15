@@ -1,4 +1,3 @@
-from numpy import character
 from . import PriceDiggingStrategy
 
 
@@ -29,7 +28,6 @@ class RealNumberDigging(PriceDiggingStrategy):
             return 0.00
 
     def _extract_numbers(self, source_to_extract: str) -> str:
-        valid_characters = '1234567890,.'
         extracted_characters = [
             self._validate_character(char) for char in source_to_extract
         ]

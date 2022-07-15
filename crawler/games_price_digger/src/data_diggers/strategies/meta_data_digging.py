@@ -1,4 +1,5 @@
-from games_price_digger.src.builders.meta_data_settings_builder import MetaDataSettingsBuilder
+from games_price_digger.src.builders.meta_data_settings_builder import \
+    MetaDataSettingsBuilder
 from . import DiggingStrategy
 
 

@@ -1,7 +1,7 @@
 import unittest
 
-from numpy import arange
-from games_price_digger.src.factories.chrome_driver_factory import ChromeDriveFactory
+from games_price_digger.src.factories.chrome_driver_factory import \
+    ChromeDriveFactory
 from selenium.webdriver.remote.webdriver import WebDriver
 
 

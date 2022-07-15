@@ -1,7 +1,7 @@
 import shutil
-import requests
 
-from games_price_digger.src.factories.response_factory import ChunkedResponseFactory
+from games_price_digger.src.factories.response_factory import \
+    ChunkedResponseFactory
 from . import DownloadingStrategy
 
 

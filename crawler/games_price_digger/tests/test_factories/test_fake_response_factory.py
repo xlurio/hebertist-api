@@ -1,6 +1,7 @@
 import unittest
 from scrapy.http import Response
-from games_price_digger.src.factories.fake_response_factory import FakeResponseFactory
+from games_price_digger.src.factories.fake_response_factory import \
+    FakeResponseFactory
 
 
 class FakeResponseFactoryTests(unittest.TestCase):

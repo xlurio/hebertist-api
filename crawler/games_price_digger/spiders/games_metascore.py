@@ -1,10 +1,11 @@
-import time
 import scrapy
-from games_price_digger.src.builders.simple_extraction_builder import SimpleExtractionBuilder
-from games_price_digger.src.components.meta_game import MetaGame
+from games_price_digger.src.builders.simple_extraction_builder import \
+    SimpleExtractionBuilder
 from games_price_digger.src.data_diggers.data_digger import DataDigger
-from games_price_digger.src.data_diggers.strategies.meta_data_digging import MetaDataDigging
-from games_price_digger.src.data_getters.page_data_extractor import PageDataExtractor
+from games_price_digger.src.data_diggers.strategies.meta_data_digging import \
+    MetaDataDigging
+from games_price_digger.src.data_getters.page_data_extractor import \
+    PageDataExtractor
 from games_price_digger.src.lists.game_box_list import GameBoxList
 from games_price_digger.src.lists.meta_game_list import MetaGameList
 

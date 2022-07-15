@@ -1,13 +1,11 @@
-from asyncio import ensure_future
-import asyncio
 import os
 import time
 from core import models
 from django.core.exceptions import ObjectDoesNotExist
 from games_price_digger.src.adapters.file_deleter import FileDeleter
-from asgiref.sync import sync_to_async, async_to_sync
 
-from games_price_digger.src.image_downloaders.image_downloader import ImageDownloader
+from games_price_digger.src.image_downloaders.image_downloader import \
+    ImageDownloader
 
 
 class GamePipeline:
@@ -109,7 +107,22 @@ class PricePipeline:
         except AttributeError:
             return item
 
-    def _get_or_create_objects(self, item):
+    def _get_or_create_objects(self):
+        try:
+            self._update_price_object()
+        except ObjectDoesNotExist:
+            self._create_objects()
+
+    def _update_price_object(self):
+        price_object = models.PriceModel.objects.get(
+            game=self.game,
+            store=self.store,
+        )
+        setattr(price_object, 'price', self.price)
+        setattr(price_object, 'link', self.link)
+        price_object.save()
+
+    def _create_objects(self, item):
         game_data = item.get('game')
         search_data = item.get('search')
 
@@ -128,21 +141,6 @@ class PricePipeline:
             'game': str(game_data),
             'search': str(search_data),
         }
-
-    def _create_price_object(self):
-        try:
-            self._update_price_object()
-        except ObjectDoesNotExist:
-            self._create_price_object()
-
-    def _update_price_object(self):
-        price_object = models.PriceModel.objects.get(
-            game=self.game,
-            store=self.store,
-        )
-        setattr(price_object, 'price', self.price)
-        setattr(price_object, 'link', self.link)
-        price_object.save()
 
     def _create_price_object(self):
         models.PriceModel.objects.create(

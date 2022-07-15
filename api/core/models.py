@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import sys
 import uuid
 
 from django.utils.translation import gettext_lazy as _
@@ -162,14 +161,14 @@ class PriceHistoricModel(models.Model):
 def _save_price_historic_to_model(data_to_insert, time_saved=None):
     """Saves inserts data directly in a SQL data table"""
     if time_saved:
-        for _, row in data_to_insert.iterrows():
+        for index, row in data_to_insert.iterrows():
             PriceHistoricModel.objects.create(
                 game=GameModel.objects.get(id=int(row['game_id'])),
                 price=float(row['price']),
                 time_saved=time_saved,
             )
     else:
-        for _, row in data_to_insert.iterrows():
+        for index, row in data_to_insert.iterrows():
             PriceHistoricModel.objects.create(
                 game=GameModel.objects.get(id=int(row['game_id'])),
                 price=float(row['price']),

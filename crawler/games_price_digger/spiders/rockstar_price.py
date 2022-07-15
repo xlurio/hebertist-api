@@ -5,7 +5,7 @@ from .utils.price.price_getters.price_getter import RealNumberPriceGetter
 
 
 class RockstarPriceSpider(scrapy.Spider):
-    
+
     name = 'rockstar_price'
     allowed_domains = ['store.rockstargames.com']
     start_urls = ['http://store.rockstargames.com/']

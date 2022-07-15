@@ -10,7 +10,7 @@ from .utils.price.price_getters.price_getter import RealNumberPriceGetter
 
 
 class UbisoftPriceSpider(scrapy.Spider, SinglePagePriceParser):
-    
+
     name = 'ubisoft_price'
     store_name = 'Ubisoft'
     allowed_domains = ['store.ubi.com']
@@ -31,7 +31,7 @@ class UbisoftPriceSpider(scrapy.Spider, SinglePagePriceParser):
                       '/descendant::' + game_price_xpath)
 
     def parse(self, response, **kwargs):
-        
+
     # Search and scrape for each game in metacritics
     for game in get_game_names():
         url = self.start_urls[0]
@@ -53,7 +53,7 @@ class UbisoftPriceSpider(scrapy.Spider, SinglePagePriceParser):
     self.driver.close()
 
 def get_search_results(self, game):
-    
+
         # Search for the game
         self.driver.get(self.start_urls[0])
         try:

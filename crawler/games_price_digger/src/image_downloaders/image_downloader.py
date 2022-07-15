@@ -1,9 +1,13 @@
 import os
 
-from games_price_digger.src.image_downloaders.downloading_strategies.default_downloading import DefaultDownloading
-from games_price_digger.src.image_downloaders.downloading_strategies.downloading_strategy import DownloadingStrategy
-from games_price_digger.src.image_downloaders.naming_strategies.naming_strategy import NamingStrategy
-from games_price_digger.src.image_downloaders.naming_strategies.uud4_naming import UUD4Naming
+from games_price_digger.src.image_downloaders.downloading_strategies \
+    .default_downloading import DefaultDownloading
+from games_price_digger.src.image_downloaders.downloading_strategies \
+    .downloading_strategy import DownloadingStrategy
+from games_price_digger.src.image_downloaders.naming_strategies \
+    .naming_strategy import NamingStrategy
+from games_price_digger.src.image_downloaders.naming_strategies \
+    .uud4_naming import UUD4Naming
 
 
 class ImageDownloader:

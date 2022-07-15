@@ -3,7 +3,8 @@ from unittest.mock import MagicMock
 
 from scrapy import Selector
 from games_price_digger.src.builders import MetaDataSettingsBuilder
-from games_price_digger.src.data_structures.digging_settings.meta_data_settings import MetaDataSettings
+from games_price_digger.src.data_structures.digging_settings \
+    .meta_data_settings import MetaDataSettings
 
 fake_item_box = MagicMock(spec=Selector)
 

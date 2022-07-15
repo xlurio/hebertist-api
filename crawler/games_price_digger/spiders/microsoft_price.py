@@ -5,7 +5,7 @@ from .utils.price.price_getters.price_getter import RealNumberPriceGetter
 
 
 class MicrosoftPriceSpider(scrapy.Spider):
-    
+
     name = 'microsoft_price'
     store_name = 'Microsoft Store'
     allowed_domains = ['www.microsoft.com']

@@ -22,7 +22,7 @@ make_migrations = $(manage) makemigrations core && \
 migrate = $(manage) migrate
 
 test_backend = $(manage) test && flake8
-test_crawler = python -m unittest
+test_crawler = python -m unittest && flake8
 
 build:
 	$(docker_compose) build

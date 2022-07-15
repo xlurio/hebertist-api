@@ -1,4 +1,5 @@
-from games_price_digger.src.utils.fake_response_builders.html_response_builder import HTMLResponseBuilder
+from games_price_digger.src.utils.fake_response_builders \
+    .html_response_builder import HTMLResponseBuilder
 from games_price_digger.src.utils.test_html_getter import TestHTMLGetter
 from scrapy.http import Response
 
