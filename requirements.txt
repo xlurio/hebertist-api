@@ -1,4 +1,4 @@
-APScheduler>=3.9.1,<3.10.0
+APScheduler>=3.9.1, <3.10.0
 coverage>=6.4.1,<6.5.0
 django>=4.0.4,<4.1.0
 django-cors-headers>=3.13.0,<3.14.0

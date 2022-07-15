@@ -13,7 +13,8 @@ crawler = crawler $(on_shell)
 crawl_games = python game_crawler.py
 crawl_prices = python price_crawler.py
 crawl_gog = $(crawl) gog_price
-crawl_steam = "(crawl) steam_price
+crawl_steam = "$(crawl) steam_price
+run_worker = python worker.py
 
 make_migrations = $(manage) makemigrations core && \
 									$(manage) migrate
@@ -63,3 +64,6 @@ test-backend:
 
 test-crawler:
 	$(run_command_on) $(crawler) "$(test_crawler)"
+
+run-worker:
+	$(run_command_on) $(crawler) "$(run_worker)"

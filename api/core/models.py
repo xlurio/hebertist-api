@@ -102,15 +102,6 @@ class GameModel(models.Model):
         return self.name
 
 
-def update_game_model():
-    """Updates the game model data"""
-    sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
-    # noinspection PyUnresolvedReferences
-    from game_crawler import GameCrawler
-    crawler = GameCrawler()
-    crawler.run_crawler()
-
-
 class StoreModel(models.Model):
     """Model of the game stores objects"""
     name = models.CharField(max_length=254, unique=True)
@@ -147,15 +138,6 @@ class PriceModel(models.Model):
         return f'{str(self.game)} price on {str(self.store)}'
 
 
-def update_price_model():
-    """Updates the game model data"""
-    sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
-    # noinspection PyUnresolvedReferences
-    from price_crawler import PriceCrawler
-    crawler = PriceCrawler()
-    crawler.run_crawler()
-
-
 class PriceHistoricModel(models.Model):
     """Models of the price historic objects"""
     game = models.ForeignKey(
@@ -180,14 +162,14 @@ class PriceHistoricModel(models.Model):
 def _save_price_historic_to_model(data_to_insert, time_saved=None):
     """Saves inserts data directly in a SQL data table"""
     if time_saved:
-        for index, row in data_to_insert.iterrows():
+        for _, row in data_to_insert.iterrows():
             PriceHistoricModel.objects.create(
                 game=GameModel.objects.get(id=int(row['game_id'])),
                 price=float(row['price']),
                 time_saved=time_saved,
             )
     else:
-        for index, row in data_to_insert.iterrows():
+        for _, row in data_to_insert.iterrows():
             PriceHistoricModel.objects.create(
                 game=GameModel.objects.get(id=int(row['game_id'])),
                 price=float(row['price']),

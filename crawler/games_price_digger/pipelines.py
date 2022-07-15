@@ -1,8 +1,11 @@
+from asyncio import ensure_future
+import asyncio
 import os
 import time
 from core import models
 from django.core.exceptions import ObjectDoesNotExist
 from games_price_digger.src.adapters.file_deleter import FileDeleter
+from asgiref.sync import sync_to_async, async_to_sync
 
 from games_price_digger.src.image_downloaders.image_downloader import ImageDownloader
 
@@ -12,8 +15,13 @@ class GamePipeline:
 
     def process_item(self, item, _):
         try:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
+
             item = item.get('game_metadata')
-            return self._get_or_create_object(item)
+            processed_item = self._get_or_create_object(item)
+
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return processed_item
         except KeyError:
             return item
 
@@ -55,7 +63,7 @@ class GamePipeline:
             name=game_name
         )
 
-        old_image = getattr(game, 'image')
+        old_image = getattr(game, 'image').path
         self._delete_old_image(old_image)
 
         new_image = item.get_image()
@@ -75,7 +83,10 @@ class GamePipeline:
             'image': image_path,
         }
 
-    def _delete_old_image(self, old_image_path):
+    def _delete_old_image(self, old_image):
+        old_image_basename = os.path.basename(old_image)
+        old_image_directory = self._get_image_destination_folder()
+        old_image_path = os.path.join(old_image_directory, old_image_basename)
         FileDeleter().delete(old_image_path)
 
     def _get_image_path(self, url):

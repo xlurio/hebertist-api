@@ -95,3 +95,17 @@ ITEM_PIPELINES = {
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+ASYNCIO_EVENT_LOOP = 'asyncio.SelectorEventLoop'
+
+
+class ReactorFailed(Exception):
+    pass
+
+
+try:
+    from scrapy.utils.reactor import install_reactor
+    install_reactor('twisted.internet.asyncioreactor.AsyncioSelectorReactor')
+
+except ImportError:
+    raise ReactorFailed('Asyncio reactor failed to start')
