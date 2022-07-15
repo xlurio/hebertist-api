@@ -1,6 +1,8 @@
 from selenium.webdriver.remote.webdriver import WebDriver
-from games_price_digger.src.builders.web_driver_wait_builder import WebDriverWaitBuilder
-from games_price_digger.src.data_structures.dynamic_search_page_settings import DynamicSearchPageSettings
+from games_price_digger.src.builders.web_driver_wait_builder import \
+    WebDriverWaitBuilder
+from games_price_digger.src.data_structures.dynamic_search_page_settings \
+    import DynamicSearchPageSettings
 
 
 class SeleniumAdapter:

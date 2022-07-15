@@ -1,4 +1,3 @@
-from cgitb import reset
 import unittest
 from games_price_digger.src.components import FoundGame
 

@@ -3,14 +3,18 @@ import pandas as pd
 import django
 
 from games_price_digger.src.adapters import GameDataFrameAdapter
-from games_price_digger.src.builders.simple_extraction_builder import SimpleExtractionBuilder
+from games_price_digger.src.builders.simple_extraction_builder import \
+    SimpleExtractionBuilder
 from games_price_digger.src.builders.search_builder import SearchBuilder
 from games_price_digger.src.components.game import Game
 from games_price_digger.src.components.search import Search
 from games_price_digger.src.data_diggers.data_digger import DataDigger
-from games_price_digger.src.data_diggers.strategies.price_digging_strategies.real_number_digging import RealNumberDigging
-from games_price_digger.src.data_diggers.strategies.search_page_digging import SearchPageDigging
-from games_price_digger.src.data_getters.page_data_extractor import PageDataExtractor
+from games_price_digger.src.data_diggers.strategies.price_digging_strategies \
+    .real_number_digging import RealNumberDigging
+from games_price_digger.src.data_diggers.strategies.search_page_digging \
+    import SearchPageDigging
+from games_price_digger.src.data_getters.page_data_extractor import \
+    PageDataExtractor
 from games_price_digger.src.game_name_getters import GameNamesGetter
 from games_price_digger.src.lists import GameBoxList
 from games_price_digger.src.lists.search_game_list import SearchGameList
@@ -18,7 +22,8 @@ from games_price_digger.src.page_getters.page_getter import PageGetter
 from games_price_digger.src.page_getters.strategies import SimplePage
 from django.core.exceptions import AppRegistryNotReady
 from scrapy import Spider
-from games_price_digger.src.utils.fake_response_builders.html_response_builder import HTMLResponseBuilder
+from games_price_digger.src.utils.fake_response_builders \
+    .html_response_builder import HTMLResponseBuilder
 
 from games_price_digger.src.utils.test_html_getter import TestHTMLGetter
 
@@ -86,10 +91,11 @@ class GenericSpider(Spider):
         self.search = self._search_builder.build()
 
     def _make_data_extractor(self):
-        digging_settings_builder = self._digging_strategy.make_settings_builder(
-            self.game_title_xpath,
-            self.game_link_xpath,
-        )
+        digging_settings_builder = \
+            self._digging_strategy.make_settings_builder(
+                self.game_title_xpath,
+                self.game_link_xpath,
+            )
 
         search_games_list = self.make_games_list()
 
@@ -107,7 +113,7 @@ class GenericSpider(Spider):
         self.data_extractor = self._data_extractor_class(extraction_strategy)
 
     def make_games_list(self):
-        """Override this method to set the games list for the extraction 
+        """Override this method to set the games list for the extraction
         strategy"""
         return SearchGameList(self.search)
 

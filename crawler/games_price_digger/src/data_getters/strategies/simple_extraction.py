@@ -1,11 +1,9 @@
-from games_price_digger.src.builders.digging_settings_builder import DiggingSettingsBuilder
-from games_price_digger.src.components.found_game import FoundGame
-from games_price_digger.src.components.search import Search
+from games_price_digger.src.builders.digging_settings_builder import \
+    DiggingSettingsBuilder
 from games_price_digger.src.data_diggers.data_digger import DataDigger
 from games_price_digger.src.lists.game_box_list import GameBoxList
 from games_price_digger.src.lists.game_list import GameList
 from games_price_digger.src.lists.list import List
-from games_price_digger.src.lists.search_game_list import SearchGameList
 
 from . import ExtractionStrategy
 

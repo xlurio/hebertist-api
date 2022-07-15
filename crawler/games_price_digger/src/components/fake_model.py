@@ -1,6 +1,3 @@
-from games_price_digger.src.adapters.fake_manager import FakeManager
-
-
 class FakeModel:
 
     name = ''

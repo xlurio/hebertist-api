@@ -3,7 +3,8 @@ from unittest.mock import MagicMock
 
 from scrapy import Selector
 from games_price_digger.src.builders import SearchPageSettingsBuilder
-from games_price_digger.src.data_structures.digging_settings.search_page_settings import SearchPageSettings
+from games_price_digger.src.data_structures.digging_settings\
+    .search_page_settings import SearchPageSettings
 
 mocked_selector = MagicMock(spec=Selector)
 

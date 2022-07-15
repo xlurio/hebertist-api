@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import sys
 import uuid
 
 from django.utils.translation import gettext_lazy as _
@@ -102,15 +101,6 @@ class GameModel(models.Model):
         return self.name
 
 
-def update_game_model():
-    """Updates the game model data"""
-    sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
-    # noinspection PyUnresolvedReferences
-    from game_crawler import GameCrawler
-    crawler = GameCrawler()
-    crawler.run_crawler()
-
-
 class StoreModel(models.Model):
     """Model of the game stores objects"""
     name = models.CharField(max_length=254, unique=True)
@@ -145,15 +135,6 @@ class PriceModel(models.Model):
         """Defines the string form of the price objects as the name of the
         game and of the store from which the price was provided"""
         return f'{str(self.game)} price on {str(self.store)}'
-
-
-def update_price_model():
-    """Updates the game model data"""
-    sys.path.append(os.path.join(BASE_DIR, '../../crawler'))
-    # noinspection PyUnresolvedReferences
-    from price_crawler import PriceCrawler
-    crawler = PriceCrawler()
-    crawler.run_crawler()
 
 
 class PriceHistoricModel(models.Model):

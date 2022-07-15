@@ -1,7 +1,8 @@
-import os
 import unittest
-from games_price_digger.src.data_diggers.strategies.price_digging_strategies import RealNumberDigging
-from games_price_digger.src.utils.fake_response_builders import HTMLResponseBuilder
+from games_price_digger.src.data_diggers.strategies.price_digging_strategies \
+    import RealNumberDigging
+from games_price_digger.src.utils.fake_response_builders import \
+    HTMLResponseBuilder
 from games_price_digger.src.utils import TestHTMLGetter
 
 

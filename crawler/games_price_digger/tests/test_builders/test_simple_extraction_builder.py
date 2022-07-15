@@ -1,10 +1,12 @@
 import unittest
 from unittest.mock import MagicMock
 from games_price_digger.src.builders import SimpleExtractionBuilder
-from games_price_digger.src.builders.search_page_settings_builder import SearchPageSettingsBuilder
+from games_price_digger.src.builders.search_page_settings_builder import \
+    SearchPageSettingsBuilder
 from games_price_digger.src.components.search import Search
 from games_price_digger.src.data_diggers.data_digger import DataDigger
-from games_price_digger.src.data_getters.strategies.simple_extraction import SimpleExtraction
+from games_price_digger.src.data_getters.strategies.simple_extraction import \
+    SimpleExtraction
 
 
 class SimpleExtractionBuilderTests(unittest.TestCase):

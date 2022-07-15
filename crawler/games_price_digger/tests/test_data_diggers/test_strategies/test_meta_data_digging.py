@@ -3,7 +3,8 @@ from unittest.mock import MagicMock
 from games_price_digger.src.data_diggers.strategies import MetaDataDigging
 from games_price_digger.src.data_structures.digging_settings \
     .meta_data_settings import MetaDataSettings
-from games_price_digger.src.factories.fake_response_factory import FakeResponseFactory
+from games_price_digger.src.factories.fake_response_factory import \
+    FakeResponseFactory
 
 
 class MetaDataDiggingTests(unittest.TestCase):

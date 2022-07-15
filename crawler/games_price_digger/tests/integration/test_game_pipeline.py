@@ -3,11 +3,12 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 import uuid
-import warnings
 from scrapy import Spider
 
 from games_price_digger.pipelines import GamePipeline
 from games_price_digger.src.adapters.fake_manager import FakeManager
+from games_price_digger.src.components.fake_image_field_file import \
+    FakeImageFieldFile
 from games_price_digger.src.components.fake_model import FakeModel
 from games_price_digger.src.components.meta_game import MetaGame
 
@@ -23,7 +24,7 @@ class GamePipelineTests(unittest.TestCase):
         'games_price_digger.pipelines.GamePipeline._get_image_path'
     )
     def test_old_image_is_deleted_before_setting_a_new_one(self, mocked_path):
-        """Test if the old image of a game is erased before new one is 
+        """Test if the old image of a game is erased before new one is
         downloaded"""
         arrangements = self._given_this_dataset()
         result = self._when_item_is_processed(arrangements, mocked_path)
@@ -34,7 +35,7 @@ class GamePipelineTests(unittest.TestCase):
         fake_object = FakeModel(
             name='Crash Bandicoot',
             score=76,
-            image=old_image_path,
+            image=FakeImageFieldFile(old_image_path),
         )
 
         fake_data = [fake_object]
@@ -42,6 +43,13 @@ class GamePipelineTests(unittest.TestCase):
 
         pipeline = GamePipeline()
         pipeline._model_manager = fake_manager
+
+        def _get_fake_image_destination_folder():
+            return self.temporary_directory
+
+        pipeline._get_image_destination_folder = \
+            _get_fake_image_destination_folder
+
         return pipeline
 
     def _make_image(self):
@@ -60,7 +68,7 @@ class GamePipelineTests(unittest.TestCase):
 
     def _when_item_is_processed(self, arrangements, mocked_path):
         old_data = arrangements._model_manager._data[0]
-        old_image_path = old_data.image
+        old_image_path = old_data.image.path
         old_image_filename = os.path.basename(old_image_path)
 
         new_image_path = self._make_image()

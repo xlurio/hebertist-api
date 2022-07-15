@@ -1,7 +1,10 @@
 from games_price_digger.src.adapters.selenium_adapter import SeleniumAdapter
-from games_price_digger.src.builders.dynamic_search_page_settings_builder import DynamicSearchPageSettingsBuilder
-from games_price_digger.src.factories.chrome_driver_factory import ChromeDriveFactory
-from games_price_digger.src.page_getters.strategies.single_page_application import SinglePageApplication
+from games_price_digger.src.builders.dynamic_search_page_settings_builder \
+    import DynamicSearchPageSettingsBuilder
+from games_price_digger.src.factories.chrome_driver_factory import \
+    ChromeDriveFactory
+from games_price_digger.src.page_getters.strategies.single_page_application \
+    import SinglePageApplication
 from . import GenericSpider
 
 

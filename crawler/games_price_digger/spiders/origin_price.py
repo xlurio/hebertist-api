@@ -14,7 +14,6 @@ from .utils.price.price_getters.price_getter import RealNumberPriceGetter
 
 
 class OriginPriceSpider(scrapy.Spider):
-    
     name = 'origin_price'
     store_name = 'Origin'
     allowed_domains = ['www.origin.com']
@@ -51,7 +50,7 @@ class OriginPriceSpider(scrapy.Spider):
                 'platform:pc-download')
 
     def parse(self, response, **kwargs):
-        
+
     # Search and scrape for each game in metacritics
     for game in get_game_names():
         search = Search(

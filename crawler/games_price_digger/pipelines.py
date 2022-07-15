@@ -4,7 +4,8 @@ from core import models
 from django.core.exceptions import ObjectDoesNotExist
 from games_price_digger.src.adapters.file_deleter import FileDeleter
 
-from games_price_digger.src.image_downloaders.image_downloader import ImageDownloader
+from games_price_digger.src.image_downloaders.image_downloader import \
+    ImageDownloader
 
 
 class GamePipeline:
@@ -12,8 +13,13 @@ class GamePipeline:
 
     def process_item(self, item, _):
         try:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
+
             item = item.get('game_metadata')
-            return self._get_or_create_object(item)
+            processed_item = self._get_or_create_object(item)
+
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return processed_item
         except KeyError:
             return item
 
@@ -55,7 +61,7 @@ class GamePipeline:
             name=game_name
         )
 
-        old_image = getattr(game, 'image')
+        old_image = getattr(game, 'image').path
         self._delete_old_image(old_image)
 
         new_image = item.get_image()
@@ -75,7 +81,10 @@ class GamePipeline:
             'image': image_path,
         }
 
-    def _delete_old_image(self, old_image_path):
+    def _delete_old_image(self, old_image):
+        old_image_basename = os.path.basename(old_image)
+        old_image_directory = self._get_image_destination_folder()
+        old_image_path = os.path.join(old_image_directory, old_image_basename)
         FileDeleter().delete(old_image_path)
 
     def _get_image_path(self, url):
@@ -98,7 +107,22 @@ class PricePipeline:
         except AttributeError:
             return item
 
-    def _get_or_create_objects(self, item):
+    def _get_or_create_objects(self):
+        try:
+            self._update_price_object()
+        except ObjectDoesNotExist:
+            self._create_objects()
+
+    def _update_price_object(self):
+        price_object = models.PriceModel.objects.get(
+            game=self.game,
+            store=self.store,
+        )
+        setattr(price_object, 'price', self.price)
+        setattr(price_object, 'link', self.link)
+        price_object.save()
+
+    def _create_objects(self, item):
         game_data = item.get('game')
         search_data = item.get('search')
 
@@ -117,21 +141,6 @@ class PricePipeline:
             'game': str(game_data),
             'search': str(search_data),
         }
-
-    def _create_price_object(self):
-        try:
-            self._update_price_object()
-        except ObjectDoesNotExist:
-            self._create_price_object()
-
-    def _update_price_object(self):
-        price_object = models.PriceModel.objects.get(
-            game=self.game,
-            store=self.store,
-        )
-        setattr(price_object, 'price', self.price)
-        setattr(price_object, 'link', self.link)
-        price_object.save()
 
     def _create_price_object(self):
         models.PriceModel.objects.create(

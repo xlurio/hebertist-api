@@ -1,4 +1,5 @@
-from games_price_digger.src.data_structures.dynamic_search_page_settings import DynamicSearchPageSettings
+from games_price_digger.src.data_structures.dynamic_search_page_settings \
+    import DynamicSearchPageSettings
 
 
 class DynamicSearchPageSettingsBuilder:

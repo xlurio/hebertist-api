@@ -1,6 +1,8 @@
 from scrapy import Selector
-from games_price_digger.src.builders.digging_settings_builder import DiggingSettingsBuilder
-from games_price_digger.src.data_structures.digging_settings.search_page_settings import SearchPageSettings
+from games_price_digger.src.builders.digging_settings_builder import \
+    DiggingSettingsBuilder
+from games_price_digger.src.data_structures.digging_settings \
+    .search_page_settings import SearchPageSettings
 
 
 class SearchPageSettingsBuilder(DiggingSettingsBuilder):

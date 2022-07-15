@@ -5,7 +5,8 @@ from games_price_digger.src.lists.meta_game_list import MetaGameList
 class MetaGameListTests(unittest.TestCase):
 
     def test_throw_error_on_invalid_item(self):
-        """Test if a error is thrown when a invalid item is added to the list"""
+        """Test if a error is thrown when a invalid item is added to the list
+        """
         arrangement = self._given_the_list()
 
         def result():

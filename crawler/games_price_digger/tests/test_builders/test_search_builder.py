@@ -1,6 +1,5 @@
 import unittest
 from games_price_digger.src.builders import SearchBuilder
-from games_price_digger.src.components.found_game import FoundGame
 from games_price_digger.src.components.search import Search
 
 

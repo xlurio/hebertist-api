@@ -3,7 +3,8 @@ from unittest.mock import MagicMock
 
 from scrapy import Selector
 from games_price_digger.src.components.meta_game import MetaGame
-from games_price_digger.src.data_structures.digging_settings import MetaDataSettings
+from games_price_digger.src.data_structures.digging_settings import \
+    MetaDataSettings
 
 
 class MetaDataSettingsTests(unittest.TestCase):

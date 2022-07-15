@@ -1,14 +1,16 @@
-import logging
 import unittest
 from unittest.mock import MagicMock
-from games_price_digger.src.builders.search_page_settings_builder import SearchPageSettingsBuilder
+from games_price_digger.src.builders.search_page_settings_builder import \
+    SearchPageSettingsBuilder
 from games_price_digger.src.components import Search
 from games_price_digger.src.components.found_game import FoundGame
-from games_price_digger.src.data_diggers.strategies.search_page_digging import SearchPageDigging
+from games_price_digger.src.data_diggers.strategies.search_page_digging \
+    import SearchPageDigging
 from games_price_digger.src.data_getters.strategies import SimpleExtraction
 from games_price_digger.src.lists.game_box_list import GameBoxList
 from games_price_digger.src.lists.search_game_list import SearchGameList
-from games_price_digger.src.utils.fake_response_builders.html_response_builder import HTMLResponseBuilder
+from games_price_digger.src.utils.fake_response_builders \
+    .html_response_builder import HTMLResponseBuilder
 from games_price_digger.src.utils.test_html_getter import TestHTMLGetter
 
 search_page_digging = MagicMock(spec=SearchPageDigging)

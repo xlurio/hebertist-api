@@ -13,7 +13,8 @@ crawler = crawler $(on_shell)
 crawl_games = python game_crawler.py
 crawl_prices = python price_crawler.py
 crawl_gog = $(crawl) gog_price
-crawl_steam = "(crawl) steam_price
+crawl_steam = "$(crawl) steam_price
+run_worker = python worker.py
 
 make_migrations = $(manage) makemigrations core && \
 									$(manage) migrate
@@ -21,7 +22,7 @@ make_migrations = $(manage) makemigrations core && \
 migrate = $(manage) migrate
 
 test_backend = $(manage) test && flake8
-test_crawler = python -m unittest
+test_crawler = python -m unittest && flake8
 
 build:
 	$(docker_compose) build
@@ -63,3 +64,6 @@ test-backend:
 
 test-crawler:
 	$(run_command_on) $(crawler) "$(test_crawler)"
+
+run-worker:
+	$(run_command_on) $(crawler) "$(run_worker)"
