@@ -8,6 +8,7 @@ services:
       POSTGRES_HOST: "${POSTGRES_HOST}"
       POSTGRES_PORT: "${POSTGRES_PORT}"
       POSTGRES_DB: "${POSTGRES_DB}"
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY}"
 
   crawler:
     environment:
@@ -16,4 +17,5 @@ services:
       POSTGRES_HOST: "${POSTGRES_HOST}"
       POSTGRES_PORT: "${POSTGRES_PORT}"
       POSTGRES_DB: "${POSTGRES_DB}"
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY}"
       DJANGO_SETTINGS_MODULE: "api.settings"

@@ -24,6 +24,8 @@ services:
       POSTGRES_HOST: "db"
       POSTGRES_PORT: 5432
       POSTGRES_DB: "api"
+      DJANGO_SECRET_KEY: "django-insecure-ta+%zrwt!v3@bn^vlsddo2d6sqcyd&m8m2!hqh$$)9#sh323ake"
+      DJANGO_ENVIRONMENT: "Development"
 
     depends_on:
       - db
@@ -40,6 +42,7 @@ services:
       POSTGRES_HOST: "db"
       POSTGRES_PORT: 5432
       POSTGRES_DB: "api"
+      DJANGO_SECRET_KEY: "django-insecure-ta+%zrwt!v3@bn^vlsddo2d6sqcyd&m8m2!hqh$$)9#sh323ake"
       DJANGO_SETTINGS_MODULE: "api.settings"
 
     depends_on:
