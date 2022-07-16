@@ -1,4 +1,3 @@
-import time
 from selenium.webdriver.remote.webdriver import WebDriver
 from games_price_digger.src.builders.web_driver_wait_builder import \
     WebDriverWaitBuilder
