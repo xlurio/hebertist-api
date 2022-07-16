@@ -212,7 +212,7 @@ class ModelsTests(TestCase):
             store2=store2,
             store3=store3,
         )
-        time_of_the_historic = date.today()
+        time_of_the_historic = date(2000, 3, 30)
 
         # Save historic
         historic_saved, game1_historic, game2_historic = \
