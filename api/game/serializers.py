@@ -32,7 +32,7 @@ class PriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PriceModel
-        fields = ['id', 'game', 'store', 'price']
+        fields = ['id', 'game', 'store', 'price', 'link']
         read_only_fields = ['id']
 
 
