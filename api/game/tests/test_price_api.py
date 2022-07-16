@@ -129,7 +129,7 @@ class PublicPriceAPITests(TestCase):
             id__in=expected_prices_id
         ).order_by('price')[:20]
         serializer = PriceDetailSerializer(best_prices_query, many=True)
-        res = self.client.get(BEST_PRICES_URL)
+        res = self.client.get(BEST_PRICES_URL, {'to': 20})
         self.assertEqual(res.data, serializer.data)
 
     def test_filter_best_prices(self):
@@ -144,11 +144,13 @@ class PublicPriceAPITests(TestCase):
         name_to_search = 'rain'
         best_prices_query = best_prices_query.filter(
             game__name__icontains=name_to_search
-        )[:20]
+        )[3:10]
 
         serializer = PriceDetailSerializer(best_prices_query, many=True)
-        res = self.client.get(BEST_PRICES_URL, {'game_name': name_to_search})
-        try:
-            self.assertEqual(res.data, serializer.data)
-        except TypeError:
-            raise TypeError(res.data)
+        parameters_payload = {
+            'game_name': name_to_search,
+            'from': 4,
+            'to': 10,
+        }
+        res = self.client.get(BEST_PRICES_URL, parameters_payload)
+        self.assertEqual(res.data, serializer.data)

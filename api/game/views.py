@@ -43,34 +43,65 @@ class PriceViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def best_prices(self, request, pk=None):
-        game_name = self.request.query_params.get('game_name')
-        lowest_prices_ids = self.get_lowest_prices_ids()
+
+        lowest_prices_ids = self._get_lowest_prices_ids()
         filtered_queryset = self.queryset.filter(id__in=lowest_prices_ids)
+        filtered_queryset = self._filter_by_name(filtered_queryset)
+        initial_index = self._filter_by_start()
+        final_index = self._filter_by_end()
 
-        if game_name:
-            filtered_queryset = filtered_queryset.filter(
-                game__name__icontains=game_name
-            )
+        ordered_queryset = filtered_queryset.order_by('price')
+        ordered_queryset = ordered_queryset[initial_index:final_index]
 
-        ordered_queryset = filtered_queryset.order_by('price')[:20]
         serializer = self.get_serializer(ordered_queryset, many=True)
         return Response(
             data=serializer.data,
             status=status.HTTP_200_OK
         )
 
-    def get_lowest_prices_ids(self):
+    def _get_lowest_prices_ids(self):
         price_query = self.queryset.values()
         price_data = pd.DataFrame(price_query.values())
         try:
-            filtered_price_data = price_data[
-                ['id', 'game_id', 'price']
-            ].groupby(
-                ['game_id']
-            ).min()
-            return list(filtered_price_data['id'])
+            return self._get_filtered_ids(price_data)
         except KeyError:
             raise KeyError(f'The available columns are: {price_data.columns}')
+
+    def _get_filtered_ids(self, price_data):
+        filtered_price_data = price_data[
+            ['id', 'game_id', 'price']
+        ].groupby(
+            ['game_id']
+        ).min()
+        return list(filtered_price_data['id'])
+
+    def _filter_by_name(self, queryset):
+        game_name = self.request.query_params.get('game_name')
+
+        if game_name:
+            return queryset.filter(
+                game__name__icontains=game_name
+            )
+
+        return queryset
+
+    def _filter_by_start(self):
+        ranking_start = self.request.query_params.get('from')
+
+        if ranking_start:
+            ranking_start = int(ranking_start) - 1
+            return ranking_start
+
+        return 0
+
+    def _filter_by_end(self):
+        ranking_end = self.request.query_params.get('to')
+
+        if ranking_end:
+            ranking_end = int(ranking_end)
+            return ranking_end
+
+        return 1
 
     def get_serializer_class(self):
         """Return the appropriated serializer class based on the action
