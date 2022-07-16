@@ -42,13 +42,15 @@ class GamePipeline:
         self._delete_old_image(old_image)
 
         new_image = item.get_image()
+
         image_path = self._get_image_path(new_image)
-        setattr(game, 'image', image_path)
-
         game_score = item.get_score()
-        setattr(game, 'score', game_score)
 
+        setattr(game, 'image', image_path)
+        setattr(game, 'score', game_score)
         game.save()
+
+        logging.info(f'{game_name} updated on database')
 
         time.sleep(3)
 
@@ -73,6 +75,7 @@ class GamePipeline:
         self._model_manager.create(
             name=game_name, score=game_score, image=image_path
         )
+        logging.info(f'{game_name} registered on database')
 
         time.sleep(3)
 

@@ -13,6 +13,9 @@ import logging
 logger = logging.getLogger('selenium.webdriver.remote.remote_connection')
 logger.setLevel(logging.WARNING)
 
+logger = logging.getLogger('urllib3.connectionpool')
+logger.setLevel(logging.WARNING)
+
 django.setup()
 
 BOT_NAME = 'games_price_digger'

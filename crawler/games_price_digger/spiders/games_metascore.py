@@ -1,3 +1,4 @@
+import logging
 import scrapy
 from games_price_digger.src.builders.simple_extraction_builder import \
     SimpleExtractionBuilder
@@ -49,6 +50,8 @@ class GamesMetascoreSpider(scrapy.Spider):
     def parse(self, response, **kwargs):
         if kwargs.get('testing'):
             self._testing = True
+
+        logging.info('Scraping games from Metacritic')
 
         game_box_elements = response.xpath(self.game_box_xpath)
         game_box_list = GameBoxList(*game_box_elements)
