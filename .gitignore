@@ -137,3 +137,6 @@ api/uploads/game/
 
 # Firefox driver
 geckodriver
+
+# Visual Studio Code
+.vscode/
