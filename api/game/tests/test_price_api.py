@@ -144,11 +144,13 @@ class PublicPriceAPITests(TestCase):
         name_to_search = 'rain'
         best_prices_query = best_prices_query.filter(
             game__name__icontains=name_to_search
-        )[:20]
+        )[2:20]
 
         serializer = PriceDetailSerializer(best_prices_query, many=True)
-        res = self.client.get(BEST_PRICES_URL, {'game_name': name_to_search})
-        try:
-            self.assertEqual(res.data, serializer.data)
-        except TypeError:
-            raise TypeError(res.data)
+        parameters_payload = {
+            'game_name': name_to_search,
+            'from': 3,
+            'to': 20,
+        }
+        res = self.client.get(BEST_PRICES_URL, parameters_payload)
+        self.assertEqual(res.data, serializer.data)
