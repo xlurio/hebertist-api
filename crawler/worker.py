@@ -24,14 +24,12 @@ class DataUpdater:
 
     async def _run_routine(self, crawler, time):
         SUCCESS_MESSAGE = f'{crawler.data_name} updated!'
-
-        crawler.run_crawler()
-        logging.info(SUCCESS_MESSAGE)
+        logging.info(f'{crawler.data_name} crawler started')
 
         while True:
-            await asyncio.sleep(time)
             crawler.run_crawler()
             logging.info(SUCCESS_MESSAGE)
+            await asyncio.sleep(time)
 
     async def update(self):
         await asyncio.gather(*self._routines)

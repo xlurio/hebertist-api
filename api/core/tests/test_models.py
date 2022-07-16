@@ -4,8 +4,9 @@ from datetime import date, datetime
 # noinspection PyUnresolvedReferences
 from core.models import (
     GameModel, get_image_path, PriceModel, PriceHistoricModel,
-    save_price_historic, StoreModel, WishlistModel
+    StoreModel, WishlistModel
 )
+from price_historic_saver import save_price_historic
 from django.contrib.auth import get_user_model
 from unittest.mock import patch
 from django.test import TestCase

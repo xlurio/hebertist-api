@@ -148,40 +148,11 @@ class PriceHistoricModel(models.Model):
                                   default=date.today)
 
     class Meta:
-        """Display the name of the price historic model on admin interface"""
         verbose_name = 'price historic'
         verbose_name_plural = 'prices historic'
 
     def __str__(self):
-        """Defines the string form of the price historic object as its game
-        name and the time of the historic"""
         return f'{self.game} price at {str(self.time_saved)}'
-
-
-def _save_price_historic_to_model(data_to_insert, time_saved=None):
-    """Saves inserts data directly in a SQL data table"""
-    if time_saved:
-        for index, row in data_to_insert.iterrows():
-            PriceHistoricModel.objects.create(
-                game=GameModel.objects.get(id=int(row['game_id'])),
-                price=float(row['price']),
-                time_saved=time_saved,
-            )
-    else:
-        for index, row in data_to_insert.iterrows():
-            PriceHistoricModel.objects.create(
-                game=GameModel.objects.get(id=int(row['game_id'])),
-                price=float(row['price']),
-            )
-
-
-def save_price_historic(time_saved=None):
-    """Saves the current lowest price of each game"""
-    prices_data = pd.DataFrame(PriceModel.objects.all().values())
-    prices_data = prices_data.groupby(by='game_id').min().reset_index()
-    prices_data = prices_data[['game_id', 'price']]
-    _save_price_historic_to_model(prices_data, time_saved)
-    return PriceHistoricModel.objects.all()
 
 
 class WishlistModel(models.Model):

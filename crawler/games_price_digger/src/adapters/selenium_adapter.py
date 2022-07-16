@@ -1,8 +1,10 @@
+import time
 from selenium.webdriver.remote.webdriver import WebDriver
 from games_price_digger.src.builders.web_driver_wait_builder import \
     WebDriverWaitBuilder
 from games_price_digger.src.data_structures.dynamic_search_page_settings \
     import DynamicSearchPageSettings
+from selenium.webdriver.common.keys import Keys
 
 
 class SeleniumAdapter:
@@ -34,11 +36,16 @@ class SeleniumAdapter:
         builder.set_timeout(15)
         builder.set_xpath_of_element_to_wait(xpath_to_search_bar)
         search_bar = builder.wait()
+        time.sleep(3)
 
         search_bar.send_keys(game_to_search)
+        search_bar.send_keys(Keys.ENTER)
         builder.set_xpath_of_element_to_wait(xpath_of_element_to_wait)
+        time.sleep(3)
 
         return self._get_page_source()
 
     def _get_page_source(self):
+        with open('./greenman_sample.html', 'w') as html_file:
+            html_file.write(self._webdriver.page_source)
         return self._webdriver.page_source

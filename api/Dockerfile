@@ -9,9 +9,8 @@ RUN python3 -m pip install --upgrade pip && \
     pip install -r requirements.txt
 
 WORKDIR /api
-COPY ./crawler /crawler
 COPY ./api /api
-RUN python3 -m pip install -e /crawler
+RUN python3 -m pip install -e .
 
 RUN useradd -ms /bin/bash user
 RUN chown -R user .

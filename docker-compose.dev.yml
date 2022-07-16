@@ -14,7 +14,6 @@ services:
   api:
     volumes:
       - ./api:/api
-      - ./crawler:/crawler
 
     ports:
       - "8000:8000"
@@ -28,6 +27,7 @@ services:
 
     depends_on:
       - db
+      - crawler
 
   crawler:
     volumes:
