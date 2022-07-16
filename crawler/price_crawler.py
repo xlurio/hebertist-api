@@ -27,8 +27,8 @@ class PriceCrawler(base_crawler.Crawler):
         for spider in self.spiders:
             runner.crawl(spider)
 
-        d = runner.join()
-        d.addBoth(lambda _: reactor.stop())
+        self.d = runner.join()
+        self.d.addBoth(lambda _: reactor.stop())
 
 
 if __name__ == '__main__':
