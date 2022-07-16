@@ -8,6 +8,10 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 import django
+import logging
+
+logger = logging.getLogger('selenium.webdriver.remote.remote_connection')
+logger.setLevel(logging.WARNING)
 
 django.setup()
 

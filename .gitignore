@@ -134,3 +134,6 @@ dmypy.json
 
 # Uploaded images of the API
 api/uploads/game/
+
+# Firefox driver
+geckodriver

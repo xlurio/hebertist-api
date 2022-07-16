@@ -13,14 +13,14 @@ crawler = crawler $(on_shell)
 crawl_games = python game_crawler.py
 crawl_prices = python price_crawler.py
 crawl_gog = $(crawl) gog_price
-crawl_steam = "$(crawl) steam_price
-run_worker = python worker.py
-
+crawl_greenmangaming = $(crawl) greenman_price
+crawl_steam = $(crawl) steam_price
+create_superuser = $(manage) createsuperuser
 make_migrations = $(manage) makemigrations core && \
 									$(manage) migrate
-
 migrate = $(manage) migrate
-
+run_price_saver = python price_historic_saver.py
+run_worker = python worker.py
 test_backend = $(manage) test && flake8
 test_crawler = python -m unittest && flake8
 
@@ -34,6 +34,9 @@ crawl-games:
 crawl-prices:
 	$(run_command_on) ${crawler} "${crawl_prices}"
 
+crawl-greenman:
+	$(run_command_on) ${crawler} "${crawl_greenmangaming}"
+
 crawl-gog:
 	${run_command_on} ${crawler} "${crawl_gog}"; \
 	$(docker_compose) down
@@ -41,6 +44,9 @@ crawl-gog:
 crawl-steam:
 	${run_command_on} ${crawler} "${crawl_steam}"; \
 	$(docker_compose) down
+
+create-su:
+	$(run_command_on) $(backend) "$(create_superuser)"
 
 dismiss:
 	$(docker_compose) down
@@ -54,6 +60,12 @@ migrate:
 run:
 	$(docker_compose) up
 
+run-crawler-worker:
+	$(run_command_on) $(crawler) "$(run_worker)"
+
+run-price-worker:
+	$(run_command_on) $(backend) "$(run_price_saver)"
+
 test-all:
 	$(run_command_on) $(backend) "$(test_backend)"; \
 	$(run_command_on) $(crawler) "$(test_crawler)"; \
@@ -64,6 +76,3 @@ test-backend:
 
 test-crawler:
 	$(run_command_on) $(crawler) "$(test_crawler)"
-
-run-worker:
-	$(run_command_on) $(crawler) "$(run_worker)"

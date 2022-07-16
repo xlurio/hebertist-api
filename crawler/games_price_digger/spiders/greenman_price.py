@@ -25,13 +25,14 @@ class GreenManPriceSpider(GenericSpider):
     webdriver_factory = ChromeDriveFactory()
 
     def get_page_getting_strategy(self, **kwargs):
-        settings_builder = DynamicSearchPageSettingsBuilder()
         url = self.start_urls[0]
+        game_to_search = kwargs.get('game')
+        xpath_to_element_to_wait = self.game_box_xpath
+
+        settings_builder = DynamicSearchPageSettingsBuilder()
         settings_builder.set_url(url)
         settings_builder.set_xpath_to_search_bar(self.search_bar_xpath)
-        game_to_search = kwargs.get('game')
         settings_builder.set_game_to_search(game_to_search)
-        xpath_to_element_to_wait = self.game_box_xpath
         settings_builder.set_xpath_to_element_to_wait(xpath_to_element_to_wait)
 
         webdriver = self.webdriver_factory.make_driver()

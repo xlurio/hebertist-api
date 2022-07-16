@@ -1,4 +1,6 @@
+import logging
 import time
+import warnings
 import pandas as pd
 import django
 
@@ -76,6 +78,8 @@ class GenericSpider(Spider):
 
     def parse(self, response, **kwargs):
         for game in self._name_getter.yield_names(self._game_data):
+            logging.info(f'Searching {game}')
+
             self._make_search(game)
             self._make_data_extractor()
 
@@ -120,6 +124,7 @@ class GenericSpider(Spider):
     def _check_for_test_environment(self, game, **kwargs):
         if kwargs.get('testing'):
             return self._make_fake_response()
+
         return self._get_page_response(game)
 
     def _make_fake_response(self):
@@ -154,8 +159,8 @@ class GenericSpider(Spider):
         game_boxes = response.xpath(self.game_box_xpath)
         game_box_list = GameBoxList(*game_boxes)
         game_data = self.data_extractor.extract_data(game_box_list)
-        iterator = game_data.make_iterator()
 
+        iterator = game_data.make_iterator()
         there_is_items_in_list = not iterator.is_done()
 
         while there_is_items_in_list:
@@ -167,14 +172,19 @@ class GenericSpider(Spider):
             there_is_items_in_list = not iterator.is_done()
 
     def _validate_data(self, game: Game, search: Search):
+        logging.info('Something was found!')
+
         game_name = game.get_name()
         has_name = len(game_name) > 0
+        logging.info(f'has_name = {str(has_name)}')
 
         game_price = game.get_price()
         has_price = game_price > 0.00
+        logging.info(f'has_price = {str(has_price)}')
 
         game_link = game.get_link()
         has_link = len(game_link) > 0
+        logging.info(f'has_link = {str(has_link)}')
 
         if has_name and has_price and has_link:
             game_link = self.validate_link(game_link)
@@ -184,6 +194,9 @@ class GenericSpider(Spider):
                 'game': game,
                 'search': search,
             }
+
+        else:
+            warnings.warn('Item found was invalid')
 
     def validate_link(self, link):
         return link

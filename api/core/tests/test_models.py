@@ -4,8 +4,9 @@ from datetime import date, datetime
 # noinspection PyUnresolvedReferences
 from core.models import (
     GameModel, get_image_path, PriceModel, PriceHistoricModel,
-    save_price_historic, StoreModel, WishlistModel
+    StoreModel, WishlistModel
 )
+from price_historic_saver import save_price_historic
 from django.contrib.auth import get_user_model
 from unittest.mock import patch
 from django.test import TestCase
@@ -211,7 +212,7 @@ class ModelsTests(TestCase):
             store2=store2,
             store3=store3,
         )
-        time_of_the_historic = date.today()
+        time_of_the_historic = date(2000, 3, 30)
 
         # Save historic
         historic_saved, game1_historic, game2_historic = \

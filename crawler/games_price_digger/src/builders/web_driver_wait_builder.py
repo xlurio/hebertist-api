@@ -2,6 +2,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.remote.webelement import WebElement
 
 
 class WebDriverWaitBuilder:
@@ -18,7 +19,7 @@ class WebDriverWaitBuilder:
         self._xpath_of_element_to_wait = xpath_of_element_to_wait
         return self
 
-    def wait(self):
+    def wait(self) -> WebElement:
         webdriver_parameters = {
             'driver': self._driver,
             'timeout': self._timeout
