@@ -89,7 +89,6 @@ class PriceViewSet(viewsets.ModelViewSet):
         ranking_start = self.request.query_params.get('from')
 
         if ranking_start:
-            print('works!')
             ranking_start = int(ranking_start) - 1
             return ranking_start
 
