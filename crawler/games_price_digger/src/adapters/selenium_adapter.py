@@ -1,3 +1,4 @@
+import time
 from selenium.webdriver.remote.webdriver import WebDriver
 from games_price_digger.src.builders.web_driver_wait_builder import \
     WebDriverWaitBuilder
@@ -39,6 +40,7 @@ class SeleniumAdapter:
         search_bar.send_keys(game_to_search)
         search_bar.send_keys(Keys.ENTER)
         builder.set_xpath_of_element_to_wait(xpath_of_element_to_wait)
+        time.sleep(3)
 
         return self._get_page_source()
 
