@@ -129,7 +129,7 @@ class PublicPriceAPITests(TestCase):
             id__in=expected_prices_id
         ).order_by('price')[:20]
         serializer = PriceDetailSerializer(best_prices_query, many=True)
-        res = self.client.get(BEST_PRICES_URL)
+        res = self.client.get(BEST_PRICES_URL, {'to': 20})
         self.assertEqual(res.data, serializer.data)
 
     def test_filter_best_prices(self):
@@ -153,4 +153,4 @@ class PublicPriceAPITests(TestCase):
             'to': 10,
         }
         res = self.client.get(BEST_PRICES_URL, parameters_payload)
-        # self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data, serializer.data)
