@@ -13,17 +13,25 @@ class GamePipeline:
     _model_manager = models.GameModel.objects
 
     def process_item(self, item, _):
-        try:
-            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
-            object_to_process = item.get('game_metadata')
-            processed_item = self._get_or_create_object(object_to_process)
+        # try:
+        os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
+        object_to_process = item.get('game_metadata')
+        processed_item = self._get_or_create_object(object_to_process)
 
-            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-            return processed_item
+        os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+        return processed_item
 
-        finally:
-            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-            return item
+        # except AttributeError:
+        #     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+        #     return item
+
+        # except KeyError:
+        #     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+        #     return item
+
+        # finally:
+        #     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+        #     return item
 
     def _get_or_create_object(self, item) -> dict:
         try:
@@ -103,27 +111,39 @@ class GamePipeline:
 
 
 class PricePipeline:
+    _game_manager = models.GameModel.objects
+    _store_manager = models.StoreModel.objects
+    _price_manager = models.PriceModel.objects
 
     def process_item(self, item, _):
-        # try:
-        os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
-        processed_item = self._create_objects(item)
-        os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+        try:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
+            object_to_process = item
+            processed_item = self._create_objects(object_to_process)
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
 
-        return processed_item
+            return processed_item
 
-        # finally:
-        #     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-        #     return item
+        except AttributeError:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return item
+
+        except KeyError:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return item
+
+        finally:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return item
 
     def _create_objects(self, item):
         game_data = item.get('game')
         search_data = item.get('search')
 
-        self.game = models.GameModel.objects.get_or_create(
+        self.game = self._game_manager.get_or_create(
             name=search_data.get_game()
         )[0]
-        self.store = models.StoreModel.objects.get_or_create(
+        self.store = self._store_manager.get_or_create(
             name=search_data.get_store()
         )[0]
         self.price = game_data.get_price()
@@ -143,7 +163,7 @@ class PricePipeline:
             self._create_price_object()
 
     def _update_price_object(self):
-        price_object = models.PriceModel.objects.get(
+        price_object = self._price_manager.get(
             game=self.game,
             store=self.store,
         )
@@ -153,7 +173,7 @@ class PricePipeline:
         logging.info('Price updated in the database!')
 
     def _create_price_object(self):
-        models.PriceModel.objects.create(
+        self._price_manager.create(
             game=self.game,
             store=self.store,
             price=self.price,

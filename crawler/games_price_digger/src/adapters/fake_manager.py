@@ -4,6 +4,15 @@ class FakeManager:
         self._model = model
         self._data = data
 
+    def get_or_create(self, **kwargs):
+        try:
+            object_got = self.get(**kwargs)
+            return (object_got, False)
+
+        except IndexError:
+            object_created = self.create(**kwargs)
+            return (object_created, True)
+
     def create(self, **kwargs):
         new_object = self._model(**kwargs)
         self._data.append(new_object)
