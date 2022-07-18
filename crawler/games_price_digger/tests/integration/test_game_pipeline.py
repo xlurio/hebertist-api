@@ -1,15 +1,13 @@
+import logging
 import os
 import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
-import uuid
 from scrapy import Spider
-
-from games_price_digger.pipelines import GamePipeline
-from games_price_digger.src.adapters.fake_manager import FakeManager
-from games_price_digger.src.components.fake_image_field_file import \
-    FakeImageFieldFile
-from games_price_digger.src.components.fake_model import FakeModel
+from games_price_digger.src.factories.game_pipeline_for_tests_factory \
+    import GamePipelineForTestsFactory, make_temporary_image
+from games_price_digger.src.factories.price_pipeline_for_tests_factory \
+    import PricePipelineForTestsFactory
 from games_price_digger.src.components.meta_game import MetaGame
 
 
@@ -19,6 +17,7 @@ class GamePipelineTests(unittest.TestCase):
     def setUp(self) -> None:
         self.fake_spider = MagicMock(spec=Spider)
         self.temporary_directory = tempfile.mkdtemp()
+        self.factory = GamePipelineForTestsFactory(self.temporary_directory)
 
     @patch(
         'games_price_digger.pipelines.GamePipeline._get_image_path'
@@ -26,52 +25,23 @@ class GamePipelineTests(unittest.TestCase):
     def test_old_image_is_deleted_before_setting_a_new_one(self, mocked_path):
         """Test if the old image of a game is erased before new one is
         downloaded"""
-        arrangements = self._given_this_dataset()
-        result = self._when_item_is_processed(arrangements, mocked_path)
+        arrangements = self._given_the_pipeline()
+        result = self._when_item_with_old_image_is_processed(
+            arrangements, mocked_path)
         self._then_the_old_image_should_be_deleted(result)
 
-    def _given_this_dataset(self):
-        old_image_path = self._make_image()
-        fake_object = FakeModel(
-            name='Crash Bandicoot',
-            score=76,
-            image=FakeImageFieldFile(old_image_path),
-        )
-
-        fake_data = [fake_object]
-        fake_manager = FakeManager(FakeModel, fake_data)
-
-        pipeline = GamePipeline()
-        pipeline._model_manager = fake_manager
-
-        def _get_fake_image_destination_folder():
-            return self.temporary_directory
-
-        pipeline._get_image_destination_folder = \
-            _get_fake_image_destination_folder
+    def _given_the_pipeline(self):
+        pipeline = self.factory.make_pipeline()
 
         return pipeline
 
-    def _make_image(self):
-        image_filename = uuid.uuid4()
-        image_path = os.path.join(
-            self.temporary_directory,
-            f'{image_filename}.jpg'
-        )
-
-        with open(image_path, 'wb') as image:
-            temporary_image = tempfile.TemporaryFile(suffix='.jpg')
-            image.write(temporary_image.read())
-            temporary_image.close()
-
-        return image_path
-
-    def _when_item_is_processed(self, arrangements, mocked_path):
+    def _when_item_with_old_image_is_processed(self, arrangements,
+                                               mocked_path):
         old_data = arrangements._model_manager._data[0]
         old_image_path = old_data.image.path
         old_image_filename = os.path.basename(old_image_path)
 
-        new_image_path = self._make_image()
+        new_image_path = make_temporary_image(self.temporary_directory)
         mocked_path.return_value = new_image_path
         new_image_filename = os.path.basename(new_image_path)
 
@@ -101,6 +71,64 @@ class GamePipelineTests(unittest.TestCase):
 
         self.assertNotIn(result[OLD_IMAGE], result[LIST_OF_FILES])
         self.assertIn(result[NEW_IMAGE], result[LIST_OF_FILES])
+
+    @patch(
+        'games_price_digger.pipelines.GamePipeline._get_image_path'
+    )
+    def test_processing_after_price_pipeline(self, mocked_path):
+        """Test if it can process the item after the price pipeline"""
+        arrangements = self._given_the_item_processed_by_price_pipeline()
+        result = self._when_processed_item_is_reprocessed(
+            arrangements, mocked_path
+        )
+        self._then_should_return_game_data(result)
+
+    def _given_the_item_processed_by_price_pipeline(self):
+        fake_game = MetaGame(
+            name='Crash Bandicoot',
+            score=76,
+            image='https://static.store.com/image.jpg',
+        )
+        fake_item = {
+            'game_metadata': fake_game
+        }
+
+        price_pipeline_factory = PricePipelineForTestsFactory()
+        price_pipeline = price_pipeline_factory.make_pipeline()
+        processed_item = price_pipeline.process_item(
+            fake_item, self.fake_spider
+        )
+
+        game_pipeline_factory = GamePipelineForTestsFactory(
+            self.temporary_directory
+        )
+        game_pipeline = game_pipeline_factory.make_pipeline()
+
+        return (game_pipeline, processed_item)
+
+    def _when_processed_item_is_reprocessed(self, arrangements, mocked_path):
+        PIPELINE = 0
+        ITEM = 1
+
+        pipeline = arrangements[PIPELINE]
+        item = arrangements[ITEM]
+
+        new_image_path = make_temporary_image(self.temporary_directory)
+        mocked_path.return_value = new_image_path
+
+        result = pipeline.process_item(item, self.fake_spider)
+        logging.error(result)
+        result.pop('image')
+
+        return result
+
+    def _then_should_return_game_data(self, result):
+        expected_result = {
+            'name': 'Crash Bandicoot',
+            'score': 76,
+        }
+
+        self.assertEqual(result, expected_result)
 
 
 if __name__ == '__main__':
