@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 import time
@@ -16,6 +17,7 @@ class GamePipeline:
         # try:
         os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
         object_to_process = item.get('game_metadata')
+        object_to_process = copy.deepcopy(object_to_process)
         processed_item = self._get_or_create_object(object_to_process)
 
         os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
@@ -118,7 +120,7 @@ class PricePipeline:
     def process_item(self, item, _):
         try:
             os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
-            object_to_process = item
+            object_to_process = copy.deepcopy(item)
             processed_item = self._create_objects(object_to_process)
             os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
 
