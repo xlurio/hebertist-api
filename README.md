@@ -4,27 +4,36 @@ Welcome to the Hebertist REST API! This API was made with the propose of making 
 
 - Retrieve the rank of lowest prices from the `N`th to the `K`th to the element in the database;
 - Filter best prices by the name of the game;
+- See the price historic of a game;
+- Update game prices every three days;
+- Update list of games every month;
 
 ## Summary
 
-- Retrieve Prices
+- [Retrieve Prices](#retrieve-prices)
 
-  - Retrieve All
-  - Filter By Game ID
-  - Filter By Up Bound
+  - [Retrieve All Prices](#retrieve-all-prices)
+  - [Filter Prices By Game ID](#filter-prices-by-game-id)
+  - [Filter Prices By Price Upper Bound](#filter-prices-by-price-upper-bound)
 
-- Retrieve The Best Prices Only
+- [Retrieve The Best Prices Only](#retrieve-the-best-prices-only)
 
-  - Retrieve All
-  - Filter By Game ID
-  - Filter By Game Name
+  - [Retrieve Best Price](#retrieve-best-price)
+  - [Get Best Price By Game ID](#get-best-price-by-game-id)
+  - [Filter Best Prices By Game Name](#filter-best-prices-by-game-name)
 
-- Running Locally
+- [Retrieve Price Historic](#retrieve-price-historic)
 
-  - Requirements
-  - Downloading
-  - Running
-  - Making requests
+  - [Retrieve All Price Historic](#retrieve-all-price-historic)
+  - [Filter Price Historic By Game ID](#filter-price-historic-by-game-id)
+  - [Get Lowest Price In History](#get-lowest-price-in-history)
+
+- [Running Locally](#running-locally)
+
+  - [Requirements](#requirements)
+  - [Downloading](#downloading)
+  - [Running](#running)
+  - [Making Requests](#making-requests)
 
 ## Retrieve Prices
 
@@ -33,3 +42,35 @@ One of the most basic requests you can make in Herbertist REST API is retrieving
 '''
 
 '''
+
+### Retrieve All Prices
+
+### Filter Prices By Game ID
+
+### Filter Prices By Price Upper Bound
+
+## Retrieve The Best Prices Only
+
+### Retrieve Best Price
+
+### Get Best Price By Game ID
+
+### Filter Best Prices By Game Name
+
+## Retrieve Price Historic
+
+### Retrieve All Price Historic
+
+### Filter Price Historic By Game ID
+
+### Get Lowest Price In History
+
+## Running Locally
+
+### Requirements
+
+### Downloading
+
+### Running
+
+### Making Requests
