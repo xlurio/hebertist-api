@@ -11,8 +11,6 @@ from rest_framework import viewsets
 
 class PriceHistoricViewSet(viewsets.ModelViewSet):
     """View set to manage the price historic objects"""
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     queryset = PriceHistoricModel.objects.all()
     serializer_class = PriceHistoricSerializer
 
