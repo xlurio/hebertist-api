@@ -150,7 +150,7 @@ class PublicPriceAPITests(TestCase):
         serializer = PriceSerializer(expected_objects, many=True)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)
-        self.assertEqual(result.data, serializer.data)
+        self.assertEqual(result.data['results'], serializer.data)
 
     def test_retrieve_best_prices(self):
         """Test retrieving best game prices"""
