@@ -38,7 +38,7 @@ Welcome to the Hebertist REST API! This API was made with the propose of making 
 
 One of the most basic requests you can make in Herbertist REST API is retrieving all prices stored in its database. To achieve it, all you need to do is make a request the `/api/game/prices/` endpoint and you should get a response similar to this one:
 
-'''
+```
 {
 "count": 193,
 "next": "http://localhost:8000/api/game/prices/?page=2",
@@ -73,7 +73,7 @@ One of the most basic requests you can make in Herbertist REST API is retrieving
 "link": "https://www.gog.com/en/game/splinter_cell"
 }
 ]
-'''
+```
 
 For performance purposes, this endpoint is paged. To navigate between pages, you can use the parameter `page` like this: `/api/game/prices/?page=[n]`, where `[n]` is the page number you desire.
 
@@ -85,7 +85,7 @@ For performance purposes, this endpoint is paged. To navigate between pages, you
 
 If in opposite to compare prices, all you want is to get the best price you can access the `/api/game/prices/best_prices` endpoint:
 
-'''
+```
 [
 {
 "id": 71,
@@ -103,11 +103,11 @@ If in opposite to compare prices, all you want is to get the best price you can 
 "link": "https://www.greenmangaming.com/games/waveform/"
 }
 ]
-'''
+```
 
 By just requesting it how it is, it will only return the **one** best price of all games and stores. To effectivelly use this endpoint, you can use its parameters like the `from` and `to`, which allows you to filter, respectivelly, the lower and upper bounds of the best prices ranking. For example, the result of requesting `/api/game/prices/best_prices/?to=3` will be a response with the three best prices of individual games in the database:
 
-'''
+```
 [
 {
 "id": 71,
@@ -155,7 +155,7 @@ By just requesting it how it is, it will only return the **one** best price of a
 "link": "https://www.gog.com/en/game/brothers_a_tale_of_two_sons"
 }
 ]
-'''
+```
 
 ### Get Best Price By Game ID
 
