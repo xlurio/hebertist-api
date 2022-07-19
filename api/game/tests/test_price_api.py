@@ -53,7 +53,7 @@ def create_price_object(game_name='Sample Game',
     return game, store, price
 
 
-def create_multiple_price_objects():
+def make_price_objects():
     games = [
         'Tomb Raider',
         'Risk of Rain 2',
@@ -87,70 +87,124 @@ class PublicPriceAPITests(TestCase):
 
     def test_list_prices(self):
         """Test retrieving all price objects"""
-        # Test parameters
-        game_name1 = 'Hextech Mayhem: A League of Legends Story'
-        game_name2 = 'V Rising'
-        store_name1 = 'Steam'
-        store_link1 = 'https://store.steampowered.com/'
-        store_name2 = 'Origin'
-        store_link2 = 'https://www.origin.com/'
-        create_price_object(game_name=game_name1, store_name=store_name1,
-                            store_link=store_link1)
-        create_price_object(game_name=game_name1, store_name=store_name2,
-                            store_link=store_link2)
-        create_price_object(game_name=game_name2, store_name=store_name1,
-                            store_link=store_link1)
+        self._given_the_objects()
+        result = self._when_prices_endpoint_receives_get_request()
+        self._then_should_list_all_price_objects(result)
+
+    def _when_prices_endpoint_receives_get_request(self):
+        return self.client.get(get_price_url())
+
+    def _then_should_list_all_price_objects(self, result):
         prices = PriceModel.objects.all().order_by('price')
         serializer = PriceSerializer(prices, many=True)
-        res = self.client.get(get_price_url())
 
-        # Assertions
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data['results'], serializer.data)
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(result.data['results'], serializer.data)
 
     def test_retrieve_details(self):
         """Test retrieving the details of the price objects"""
-        game, store, price = create_price_object(
+        price = self._given_the_object()
+
+        detail_endpoint_url = get_price_url(price.id)
+        result = self._when_price_detail_endpoint_is_requested(
+            detail_endpoint_url
+        )
+
+        self._then_should_retrieve_price_details(result, price)
+
+    def _given_the_object(self):
+        _, _, price = create_price_object(
             game_name='Hextech Mayhem: A League of Legends Story',
             store_name='Steam',
             store_link='https://store.steampowered.com/'
         )
-        serializer = PriceDetailSerializer(price)
-        res = self.client.get(get_price_url(price.id))
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+
+        return price
+
+    def _when_price_detail_endpoint_is_requested(self, url):
+        return self.client.get(url)
+
+    def _then_should_retrieve_price_details(self, result, price_object):
+        serializer = PriceDetailSerializer(price_object)
+
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(result.data, serializer.data)
+
+    def test_filter_prices_by_game_id(self):
+        """Test game ID filter on prices endpoint"""
+        self._given_the_objects()
+        price = self._given_the_object()
+        result = self._when_prices_endpoint_is_requested_with_arguments(
+            {'game_id': price.game.id}
+        )
+        self._then_should_filter_prices_by_game_id(result, price.game.id)
+
+    def _when_prices_endpoint_is_requested_with_arguments(
+        self, arguments: dict
+    ):
+        return self.client.get(get_price_url(), arguments)
+
+    def _then_should_filter_prices_by_game_id(self, result, object_id):
+        expected_objects = PriceModel.objects.all()\
+            .filter(game__id=object_id).order_by('price')
+        serializer = PriceSerializer(expected_objects, many=True)
+
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(result.data, serializer.data)
 
     def test_retrieve_best_prices(self):
         """Test retrieving best game prices"""
-        create_multiple_price_objects()
+        self._given_the_objects()
+        result = self._when_best_prices_endpoint_is_requested_with_arguments(
+            {'to': 20}
+        )
+        self._then_should_list_twenty_best_prices(result)
+
+    def _then_should_list_twenty_best_prices(self, result):
         price_query = PriceModel.objects.all().order_by('price')
         expected_prices_id = get_lowest_prices_id(price_query)
+
         best_prices_query = PriceModel.objects.filter(
             id__in=expected_prices_id
         ).order_by('price')[:20]
         serializer = PriceDetailSerializer(best_prices_query, many=True)
-        res = self.client.get(BEST_PRICES_URL, {'to': 20})
-        self.assertEqual(res.data, serializer.data)
 
-    def test_filter_best_prices(self):
+        self.assertEqual(result.data, serializer.data)
+
+    def test_filter_best_prices_by_game_name(self):
         """Test filtering by game name"""
-        create_multiple_price_objects()
-        price_query = PriceModel.objects.all().order_by('price')
-        expected_prices_id = get_lowest_prices_id(price_query)
-        best_prices_query = PriceModel.objects.filter(
-            id__in=expected_prices_id
-        ).order_by('price')
+        self._given_the_objects()
 
-        name_to_search = 'rain'
-        best_prices_query = best_prices_query.filter(
-            game__name__icontains=name_to_search
-        )[3:10]
-
-        serializer = PriceDetailSerializer(best_prices_query, many=True)
         parameters_payload = {
-            'game_name': name_to_search,
+            'game_name': 'rain',
             'from': 4,
             'to': 10,
         }
-        res = self.client.get(BEST_PRICES_URL, parameters_payload)
-        self.assertEqual(res.data, serializer.data)
+        result = self._when_best_prices_endpoint_is_requested_with_arguments(
+            parameters_payload
+        )
+        self._then_should_filter_best_prices_by_game_name(result)
+
+    def _then_should_filter_best_prices_by_game_name(self, result):
+        price_query = PriceModel.objects.all().order_by('price')
+        expected_prices_id = get_lowest_prices_id(price_query)
+
+        name_to_search = 'rain'
+
+        best_prices_query = PriceModel.objects.filter(
+            id__in=expected_prices_id
+        ).order_by('price')
+        best_prices_query = best_prices_query.filter(
+            game__name__icontains=name_to_search
+        )[3:10]
+        serializer = PriceDetailSerializer(best_prices_query, many=True)
+
+        self.assertEqual(result.data, serializer.data)
+
+    def _when_best_prices_endpoint_is_requested_with_arguments(
+        self, arguments: dict
+    ):
+        return self.client.get(BEST_PRICES_URL, arguments)
+
+    def _given_the_objects(self):
+        make_price_objects()

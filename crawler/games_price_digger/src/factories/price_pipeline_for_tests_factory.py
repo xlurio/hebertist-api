@@ -22,23 +22,27 @@ class PricePipelineForTestsFactory:
         return pipeline
 
     def _make_fake_manager(self):
-        game_model = FakeGameModel(name='Crash Bandicoot')
-        store_model = FakeStoreModel(name='Steam')
-        price_model = FakePriceModel(
-            game=game_model,
-            store=store_model,
+        game_model = FakeGameModel
+        store_model = FakeStoreModel
+        price_model = FakePriceModel
+
+        game_object = FakeGameModel(name='Batman Arkham City')
+        store_object = FakeStoreModel(name='Random')
+        price_object = FakePriceModel(
+            game=game_object,
+            store=store_object,
             price=36.99,
             link='https://some.store.com/game-page/',
         )
 
-        game_manager = self._make_manager(game_model)
-        store_manager = self._make_manager(store_model)
-        price_manager = self._make_manager(price_model)
+        game_manager = self._make_manager(game_model, game_object)
+        store_manager = self._make_manager(store_model, store_object)
+        price_manager = self._make_manager(price_model, price_object)
 
         return (game_manager, store_manager, price_manager)
 
-    def _make_manager(self, model_object: FakeModel) -> FakeModel:
+    def _make_manager(self, model, model_object: FakeModel) -> FakeManager:
         data = [model_object]
-        manager = FakeManager(model_object, data)
+        manager = FakeManager(model, data)
 
         return manager

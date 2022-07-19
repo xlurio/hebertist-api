@@ -14,26 +14,25 @@ class GamePipeline:
     _model_manager = models.GameModel.objects
 
     def process_item(self, item, _):
-        # try:
-        os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
-        object_to_process = item.get('game_metadata')
-        object_to_process = copy.deepcopy(object_to_process)
-        processed_item = self._get_or_create_object(object_to_process)
+        try:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
+            object_to_process = item.get('game_metadata')
+            object_to_process = copy.deepcopy(object_to_process)
+            processed_item = self._get_or_create_object(object_to_process)
 
-        os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-        return processed_item
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return processed_item
 
-        # except AttributeError:
-        #     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-        #     return item
+        except AttributeError:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return item
 
-        # except KeyError:
-        #     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-        #     return item
+        except KeyError:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
+            return item
 
-        # finally:
-        #     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-        #     return item
+        finally:
+            os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
 
     def _get_or_create_object(self, item) -> dict:
         try:
@@ -136,7 +135,6 @@ class PricePipeline:
 
         finally:
             os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "false"
-            return item
 
     def _create_objects(self, item):
         game_data = item.get('game')
