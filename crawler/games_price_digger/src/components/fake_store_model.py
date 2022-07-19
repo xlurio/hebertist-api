@@ -19,3 +19,8 @@ class FakeStoreModel(FakeModel):
             f'\tname: {self.name},\n' +
             '}'
         )
+
+    def __eq__(self, __o: object) -> bool:
+        is_name_equal = self.name == __o.name
+
+        return is_name_equal

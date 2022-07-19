@@ -1,3 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist
+
+
 class FakeManager:
 
     def __init__(self, model, data):
@@ -24,7 +27,11 @@ class FakeManager:
             data = self._filter_data(filter_arg, data)
 
         found_object = data[0]
-        return found_object
+
+        if not (found_object is None):
+            return found_object
+
+        raise ObjectDoesNotExist()
 
     def _filter_data(self, filter_parameter, data_to_filter):
         KEY = 0
@@ -33,7 +40,8 @@ class FakeManager:
 
         data = [
             data_object for data_object in data_to_filter
-            if filter_parameter[VALUE] in getattr(data_object, model_field)
+            if filter_parameter[VALUE] ==
+            getattr(data_object, model_field)
         ]
 
         return data

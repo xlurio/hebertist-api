@@ -25,8 +25,11 @@ def make_temporary_image(directory) -> str:
 
 class GamePipelineForTestsFactory:
 
-    def __init__(self, directory):
-        self._directory = directory
+    def __init__(self, directory=None):
+        if directory:
+            self._directory = directory
+        else:
+            self._directory = tempfile.mkdtemp()
 
     def make_pipeline(self) -> GamePipeline:
         pipeline = GamePipeline()

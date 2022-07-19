@@ -26,3 +26,10 @@ class FakeGameModel(FakeModel):
             f'\timage: {self.image}\n' +
             '}'
         )
+
+    def __eq__(self, __o: object) -> bool:
+        is_name_equal = self.name == __o.name
+        is_score_equal = self.score == __o.score
+        is_image_equal = self.image == __o.image
+
+        return is_name_equal and is_score_equal and is_image_equal

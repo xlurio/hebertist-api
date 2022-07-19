@@ -1,4 +1,3 @@
-import logging
 import os
 import tempfile
 import unittest
@@ -117,7 +116,6 @@ class GamePipelineTests(unittest.TestCase):
         mocked_path.return_value = new_image_path
 
         result = pipeline.process_item(item, self.fake_spider)
-        logging.error(result)
         result.pop('image')
 
         return result

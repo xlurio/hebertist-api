@@ -39,7 +39,17 @@ class PriceViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Retrieve the price objects"""
-        return self.queryset.order_by('price')
+        filtered_by_game_id = self._filter_by_game_id(self.queryset)
+        return filtered_by_game_id.order_by('price')
+
+    def _filter_by_game_id(self, queryset):
+        if self.request.query_params.get('game_id'):
+            game_id = self.request.query_params.get('game_id')
+            parsed_game_id = int(game_id)
+
+            return queryset.filter(game__id=parsed_game_id)
+
+        return queryset
 
     @action(detail=False, methods=['get'])
     def best_prices(self, request, pk=None):
