@@ -8,7 +8,7 @@ from rest_framework import serializers
 class PriceHistoricSerializer(serializers.ModelSerializer):
     """Serializes the price historic objects"""
     game = serializers.PrimaryKeyRelatedField(
-        queryset=GameModel
+        queryset=GameModel.objects.all()
     )
 
     class Meta:

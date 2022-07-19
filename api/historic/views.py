@@ -1,18 +1,12 @@
-from rest_framework.permissions import IsAuthenticated
-# noinspection PyUnresolvedReferences
 from core.models import PriceHistoricModel
-# noinspection PyUnresolvedReferences
 from historic.serializers import (
     PriceHistoricSerializer, PriceHistoricDetailSerializer
 )
-from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets
 
 
 class PriceHistoricViewSet(viewsets.ModelViewSet):
     """View set to manage the price historic objects"""
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     queryset = PriceHistoricModel.objects.all()
     serializer_class = PriceHistoricSerializer
 
