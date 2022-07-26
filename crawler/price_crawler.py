@@ -1,34 +1,33 @@
-from games_price_digger import spiders
-import base_crawler
 import django
-from scrapy.utils.project import get_project_settings
-from twisted.internet import reactor
-from scrapy.crawler import CrawlerRunner
+from scrapy.crawler import CrawlerProcess
 from scrapy.utils.log import configure_logging
+from scrapy.utils.project import get_project_settings
+
+from games_price_digger import spiders
 
 django.setup()
 
 
-class PriceCrawler(base_crawler.Crawler):
+class PriceCrawler():
     """Crawls the game prices"""
     data_name = 'Prices'
 
     spiders = (
-        spiders.steam_price.SteamPriceSpider,
-        spiders.gog_price.GogPriceSpider,
-        spiders.greenman_price.GreenManPriceSpider,
+        spiders.SteamPriceSpider,
+        spiders.GogPriceSpider,
+        spiders.GreenManPriceSpider,
     )
 
-    def __init__(self, ):
-        configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
-        settings = get_project_settings()
-        runner = CrawlerRunner(settings)
+    configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
+    settings = get_project_settings()
+
+    def run_crawler(self):
+        process = CrawlerProcess(self.settings)
 
         for spider in self.spiders:
-            runner.crawl(spider)
+            process.crawl(spider)
 
-        self.d = runner.join()
-        self.d.addBoth(lambda _: reactor.stop())
+        process.start()
 
 
 if __name__ == '__main__':
